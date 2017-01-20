@@ -5,32 +5,17 @@
 # E-mail    bayle.yann@live.fr
 # License   MIT
 # Created   13/10/2016
-# Updated   19/01/2017
+# Updated   20/01/2017
 # Version   1.0.0
 #
 
 """
-Description of kea.py
+Description of svmbff.py
 ======================
-
-Reproduce:
-source activate py27
-cd /media/sf_DATA/Code/Gouyon/packageRepro/package/TableII/MARSYAS_CAL97/
-python run_autotagging_framework.py /media/sf_DATA/Code/Gouyon/packageRepro/package/TableII/MARSYAS_CAL97/
-
-Info:
-https://github.com/marsyas/marsyas/blob/master/src/apps/kea/kea.cpp
 
 :Example:
 
-python kea.py
-./clean.sh ; python kea.py -n 5 -i /media/sf_DATA/Datasets/Simbals/marsyas/results/ -g /media/sf_DATA/Datasets/Simbals/groundtruth.csv
-
-.. todo::
-Generate train/test de kea
-Lancer kea sur train/test
-replace shutil by os or sys
-
+python svmbff.py
 """
 
 import os
@@ -450,19 +435,10 @@ def extract_features(tracks_dir="tracks/", feat_dir="features/"):
     utils.print_progress_end()
     os.system("rm bextract_single.mf")
 
-def read_groundtruths(filename):
-    filename = utils.abs_path_file(filename)
-    groundtruths = {}
-    with open(filename, "r") as filep:
-        for line in filep:
-            row = line[:-1].split(",")
-            groundtruths[row[0]] = row[1]
-    return groundtruths
-
 def table1_exp1(folds_dir):
     utils.print_success("Experiment 1 in Table 1")
     fn_gts = "groundtruths/database1.csv"
-    gts = read_groundtruths(fn_gts)
+    gts = utils.read_groundtruths(fn_gts)
     res_files = [name for name in os.listdir(folds_dir) if os.path.isfile(os.path.join(folds_dir, name)) and "results" in name]
     acc = []
     f1 = []
@@ -481,8 +457,7 @@ def table1_exp1(folds_dir):
     # Print average ± standard deviation
     utils.print_info("Accuracy " + str(sum(acc)/float(len(acc))) + " ± " + str(stdev(acc)))
     utils.print_info("F-Measure " + str(sum(f1)/float(len(f1))) + " ± " + str(stdev(f1)))
-    dir_res = "results/"
-    utils.create_dir(dir_res)
+    dir_res = utils.create_dir("results/")
     with open(dir_res + "table1_accuracy.csv", "a") as filep:
         for val in acc:
             filep.write("SVMBFF," + str(val) + "\n")

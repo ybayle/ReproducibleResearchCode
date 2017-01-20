@@ -141,12 +141,13 @@ def abs_path_file(filename):
     else:
         print_error("Invalid file name: " + filename)
 
-def create_dir(dirName):
-    if not os.path.exists(dirName):
-        os.makedirs(dirName)
-        return True
-    else:
-        return False
+def create_dir(dir_name):
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+    dir_name = abs_path_dir(dir_name)
+    if dir_name[-1] != "/" or dir_name[-1] != "\\":
+        dir_name += os.sep
+    return dir_name
 
 def save_results(algo_name, predictions):
     res_dir = "res/"
@@ -281,6 +282,15 @@ def rand_color(nb=1):
     for index in range(0, nb):
         colors.append("#%06X" % random.randint(0,256**3-1))
     return colors
+
+def read_groundtruths(filename):
+    filename = abs_path_file(filename)
+    groundtruths = {}
+    with open(filename, "r") as filep:
+        for line in filep:
+            row = line[:-1].split(",")
+            groundtruths[row[0]] = row[1]
+    return groundtruths
 
 def get_test_gts():
     test_groundtruths = {}

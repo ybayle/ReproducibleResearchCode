@@ -5,7 +5,7 @@
 # E-mail    bayle.yann@live.fr
 # License   MIT
 # Created   19/01/2017
-# Updated   19/01/2017
+# Updated   20/01/2017
 # Version   1.0.0
 #
 
@@ -19,20 +19,19 @@ Launch source code file in order to reproduce results of the article
 
 python reproducibility.py
 
-Dependencies:
-marsyas software
-http://marsyas.info/doc/manual/marsyas-user/Step_002dby_002dstep-building-instructions.html#Step_002dby_002dstep-building-instructions
-
 
 """
 
 import os
+import sys
 import isrc
 import utils
 import svmbff
-import urllib
+# import urllib
 
 def clean_filenames(tracks_dir = "tracks/"):
+    """Description of clean_filenames
+    """
     for old_fn in os.listdir(tracks_dir):
         new_fn = old_fn
         new_fn = new_fn.replace(" ", "_")
@@ -40,6 +39,33 @@ def clean_filenames(tracks_dir = "tracks/"):
         new_fn = new_fn.replace("(", "_")
         new_fn = new_fn.replace(")", "_")
         os.rename(tracks_dir + old_fn, tracks_dir + new_fn)
+
+def yaafe_feat_extraction(dir_tracks):
+    """Description of yaafe_feat_extraction
+    yaafe.py -r 22050 -f "mfcc: MFCC blockSize=2048 stepSize=1024" audio_fn.txt
+    """
+    utils.print_success("YAAFE features extraction (approx. 8 minutes)")
+    # Assert Python version
+    if sys.version_info.major != 2:
+        utils.print_error("Yaafe needs Python 2 environment")
+    
+    # Assert folder exists
+    dir_tracks = utils.abs_path_dir(dir_tracks)    
+    
+    filelist = os.listdir(dir_tracks)
+    dir_feat = utils.create_dir(utils.create_dir("features") + "database1")
+    # dir_tmp = utils.create_dir("tmp")
+    # dir_yaafe = utils.create_dir(dir_tmp + "yaafe")
+    # fn_filelist = dir_yaafe + "filelist.txt"
+    dir_current = os.getcwd()
+    os.chdir(dir_tracks)
+    yaafe_cmd = 'yaafe -r 22050 -f "mfcc: MFCC blockSize=2048 stepSize=1024" '
+    yaafe_cmd += "--resample -b " + dir_feat + " "
+    for index, filen in enumerate(filelist):
+        utils.print_progress_start(str(index+1) + "/" + str(len(filelist)) + " " + filen)
+        os.system(yaafe_cmd + filen + "> /dev/null 2>&1")
+    utils.print_progress_end()
+    os.chdir(dir_current)
 
 def main():
     """Description of main
@@ -76,7 +102,10 @@ def main():
     # tracks_dir = "tracks/"
     # clean_filenames(tracks_dir)
 
-    svmbff.main()
+    # svmbff.main()
+    dir_tracks = utils.create_dir("tracks")
+    yaafe_feat_extraction(dir_tracks)
+    # ghosal.main()
 
 if __name__ == "__main__":
     main()
