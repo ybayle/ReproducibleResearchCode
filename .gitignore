@@ -1,3 +1,9 @@
+# Custom Yann
+*.wav
+*.mp3
+*.ogg
+
+# Below is automatically generated code
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
