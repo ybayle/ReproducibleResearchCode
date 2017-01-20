@@ -26,6 +26,7 @@ import os
 import sys
 import isrc
 import utils
+import ghosal
 import svmbff
 # import urllib
 
@@ -71,6 +72,9 @@ def main():
     """Description of main
     """
 
+    utils.print_success("Reproducible research (approx. 30 minutes)")
+    utils.print_warning("You need at least 150Go of free space")
+
     # Variables
     # groundtruths_filename = "groundtruths.csv"
     # results_dir = "results/"
@@ -102,10 +106,11 @@ def main():
     # tracks_dir = "tracks/"
     # clean_filenames(tracks_dir)
 
-    # svmbff.main()
-    dir_tracks = utils.create_dir("tracks")
-    yaafe_feat_extraction(dir_tracks)
-    # ghosal.main()
+    # svmbff.experiment_1()
+    # dir_tracks = utils.create_dir("tracks")
+    # yaafe_feat_extraction(dir_tracks)
+    ghosal.experiment_1()
+    # vqmm.main()
 
 if __name__ == "__main__":
     main()

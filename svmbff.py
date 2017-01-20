@@ -80,15 +80,15 @@ def merge_arff(indir, outfilename):
     utils.print_success("Preprocessing ARFFs")
     indir = utils.abs_path_dir(indir)
     tmpfilename = "tmp_arff.txt"
-    os.system("ls " + indir + " > " + tmpfilename)
+    os.system("ls " + indir + "*.arff > " + tmpfilename)
     with open(tmpfilename, 'r') as filenames:
         outfn = open(outfilename, 'w')
         cpt_invalid_fn = 0
         # Write first lines of ARFF template file
         for filename in filenames:
-            filename = validate_arff(indir + "/" + filename[:-1])
-            if filename:
-                with open(filename, 'r') as template:
+            new_fn = validate_arff(filename[:-1])
+            if new_fn:
+                with open(new_fn, 'r') as template:
                     nb_line = 77
                     for line in template:
                         if not nb_line:
@@ -101,11 +101,11 @@ def merge_arff(indir, outfilename):
         # Append all arff file to the output file
         cur_file_num = 1
         for filename in filenames:
-            filename = validate_arff(indir + "/" + filename[:-1])
-            if filename:
+            new_fn = validate_arff(filename[:-1])
+            if new_fn:
                 cur_file_num = cur_file_num + 1
                 utils.print_progress_start("Analysing file\t" + str(cur_file_num))
-                fname = open(filename,'r')
+                fname = open(new_fn, 'r')
                 outfn.write("".join(fname.readlines()[74:77]))
                 fname.close()
             else:
@@ -149,8 +149,7 @@ def add_groundtruth(feature_fn, groundtruth_fn, output_fn):
                 if line[0] != "%":
                     # Alter feature line with correct tag
                     cur_line = line.split(",")
-                    # old_tag = cur_line[-1].split("_")[0]
-                    old_tag = cur_line[-1][:-1]
+                    old_tag = cur_line[-1].split(".")[0]
                     if old_tag in groundtruths:
                         new_tag = groundtruths[old_tag]
                         output.write(tmp_line + ",".join(cur_line[:-1]) + "," + new_tag +"\n")
@@ -447,8 +446,9 @@ def table1_exp1(folds_dir):
         groundtruths = []
         preds = read_preds(folds_dir + res)
         for name in preds:
-            if name in gts:
-                groundtruths.append(gts[name])
+            name_gts = name.split(".")[0]
+            if name_gts in gts:
+                groundtruths.append(gts[name_gts])
                 predictions.append(preds[name])
         acc.append(accuracy_score(groundtruths, predictions))
         predictions = [1 if i=="s" else 0 for i in predictions]
@@ -465,8 +465,8 @@ def table1_exp1(folds_dir):
         for val in f1:
             filep.write("SVMBFF," + str(val) + "\n")
 
-def main():
-    utils.print_success("SVMBFF (approx. 2 minutes)")
+def experiment_1():
+    utils.print_success("SVMBFF Experiment 1 (approx. 2 minutes)")
     
     # Variables
     dir_tmp = "tmp/"
@@ -486,6 +486,10 @@ def main():
     dir_folds = create_folds(feats_gts_db1, 5, dir_svmbff)
     run_kea_on_folds(dir_folds)
     table1_exp1(dir_folds)
+
+def main():
+    utils.print_success("SVMBFF (approx. 2 minutes)")
+    experiment_1()
 
 if __name__ == "__main__":
     PARSER = argparse.ArgumentParser(description="Validate list of ISRCs")

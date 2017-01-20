@@ -129,12 +129,16 @@ def classify(file_features):
         for val in f1:
             filep.write("Ghosal'," + str(val) + "\n")
 
-def main():
-    utils.print_success("Ghosal' (approx. 15 minutes)")
+def experiment_1():
+    utils.print_success("Ghosal' Experiment 1 (approx. 15 minutes)")
     dir_features = "features/database1/"
     file_feat = preprocess_yaafe_features(dir_features)
     file_feat = "tmp/ghosal/database1.csv" # todo to delete
     classify(file_feat)
+
+def main():
+    utils.print_success("Ghosal' (approx. 15 minutes)")
+    experiment_1()
 
 if __name__ == "__main__":
     main()
