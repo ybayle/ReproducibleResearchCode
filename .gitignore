@@ -2,6 +2,9 @@
 *.wav
 *.mp3
 *.ogg
+features/
+results/
+tmp/
 
 # Below is automatically generated code
 # Byte-compiled / optimized / DLL files
