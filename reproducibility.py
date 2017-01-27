@@ -74,6 +74,7 @@ def main():
 
     utils.print_success("Reproducible research (approx. 30 minutes)")
     utils.print_warning("You need at least 150Go of free space")
+    utils.print_warning("and to store tracks in a dir named: tracks/")
 
     # Variables
     # groundtruths_filename = "groundtruths.csv"
@@ -109,8 +110,8 @@ def main():
     # svmbff.experiment_1()
     # dir_tracks = utils.create_dir("tracks")
     # yaafe_feat_extraction(dir_tracks)
-    ghosal.experiment_1()
-    # vqmm.main()
+    # ghosal.experiment_1()
+    vqmm.main()
 
 if __name__ == "__main__":
     main()

@@ -18,12 +18,3 @@ fi
 if [ -d "./results" ]; then
     rm -r ./results
 fi
-if [ -f bextract_single.mf ]; then
-    rm bextract_single.mf
-fi
-if [ -f track_fn.mf ]; then
-    rm track_fn.mf
-fi
-# if [ -f *.pyc ]; then
-#     rm *.pyc
-# fi

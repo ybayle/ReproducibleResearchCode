@@ -1,0 +1,8 @@
+syntax: glob
+cbk/*
+desktop.ini
+*.o
+Results*/*
+Models*/*
+cbk
+vqmm

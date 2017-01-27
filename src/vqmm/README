@@ -1,0 +1,85 @@
+1. Build VQMM:
+1.1 On Linux/Mac OS
+Just write make on the command line:
+$ make
+gcc    -c -o main.o main.c
+gcc    -c -o matrix.o matrix.c
+gcc    -c -o iof.o iof.c
+gcc    -c -o error.o error.c
+gcc    -c -o matrand.o matrand.c
+gcc    -c -o random.o random.c
+gcc    -c -o numerica2.o numerica2.c
+gcc    -c -o string-utils.o string-utils.c
+gcc -g -O3 -ansi -pedantic -o ./vqmm main.o matrix.o iof.o error.o matrand.o random.o numerica2.o string-utils.o -lm
+
+1.2 On windows: call 911 (or email tl@di.fc.ul.pt). 
+No one has done this yet. Patches are welcome.
+
+2. Using vqmm
+Three steps are necessary:
+1) build a codebook
+2) make models
+3) use/test models
+
+2.1 Building codebooks
+The script "makecodebook.sh" should help building codebooks. To use the script you may have to changes the file permissions:
+$ chmod u+x makecodebook.sh
+
+The script expects four parameters:
+$ ./makecodebook.sh <random-seed> <codebook-size> <data-set> <codebook-name>
+where:
+
+<random-seed> is an integer used to initialize the random number
+generator. Using twice the same number should lead to the exact same
+results. If not, complain ! The value is given to the srand function
+(see stdlib.h) and should be an unsigned int. 
+
+<codebook-size> is a positive integer that corresponds to the size of
+the codebook (it is the k_2 parameter described in [1]). For most
+classification/autotagging tasks is has been found that values arround
+200 give good results. For the CAL500 dataset codebook of size ~75
+usually give the best results. Try a few to convince yourself that the
+methos is not very sensible to the value of this parameter.  
+
+<data-set> is a file that contains a list of file names (one per
+line). Ex.:
+/media/my-dataset/tralala.mfcc
+/media/my-dataset/turlututu.mfcc
+...
+
+Each file must contain the feature vectors of an audio piece
+computed with your favorite toolbox. The accepted format is an ASCII
+file with one frame per line. Values are separated by a space or a tab character. 
+$ head -n 2 10cc-for_you_and_i.mfcc
+2.9005789756774902 -0.07957562804222107 0.6317092180252075 -1.1362110376358032 0.9094099998474121 -0.38251858949661255 -0.33309268951416016 -0.1240542009472847 0.09646902978420258 0.9319989085197449 -0.33265799283981323 0.03212996944785118 0.23374329507350922 
+4.570676803588867 0.6527950763702393 1.2842040061950684 0.06458143144845963 0.4262644052505493 0.3337688148021698 0.02486637979745865 0.3456763029098511 -0.17414569854736328 0.13168959319591522 -0.22003580629825592 0.0879538431763649 -0.24522429704666138 
+
+Any feature set for which a vector of values is computed for each
+frame is suitable.
+  
+<codebook-name> The file where the codebook is written. TIP: in the
+filename it is a good idea to include the parameters that were used to
+make the codebook ex: CAL500.r34.s100.cbk (random seed = 34, size = 100).
+
+2.2 Building models
+
+2.3 Testing models
+
+3. Bad luck
+When something goes wrong the program will probably end with a "Segmentation
+fault, core dumped" error (it is C, after all). The program should at
+least give a warning message before dying (if not, complain !). For
+example if a file is not found you may read the following message:
+
+Selecting samples in file [10cc-for_you_and_i-30s.ymfcc2]
+
+*** Warning in function FileOpen. Cause: 10cc-for_you_and_i-30s.ymfcc2.
+
+./makecodebook.sh: line 19:  8424 Segmentation fault: 11  ./vqmm
+-quiet y -list-of-files $DATASET -random $RANDOMSEED -codebook-size
+$CODEBOOKSIZE -codebook $CODEBOOKNAME
+
+
+ 
+[1]
+
