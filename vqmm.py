@@ -184,9 +184,7 @@ def convert_features(inDIR, outDIR, errDIR, filename):
             os.makedirs(errDIR)
         shutil.move(inFileName, errFileName)
 
-vqmm_cmd = '/home/yann/ownCloud/Code/GitHub/vqmm/ThibaultLanglois_VQMM/vqmm'
-
-def create_cbk(files_list, file_cbk):
+def create_cbk(vqmm_cmd, files_list, file_cbk):
     randomSeed = "1"
     codebookSize = "100"
     subprocess.call([vqmm_cmd, '-quiet', 'n', '-list-of-files', files_list, 
@@ -318,8 +316,11 @@ def main():
             filep.write(dir_feats + filename + "\t" + groundtruths[fn] + "\n")
 
     # 4
+    # Need to compile VQMM and check that everything is ok
+    vqmm_cmd = "src/vqmm/vqmm"
+    os.system("")
     file_cbk = dir_tmp + "codebook.txt"
-    create_cbk(files_list, file_cbk)
+    create_cbk(vqmm_cmd, filenames_gts, file_cbk)
     # experiment_1()
     # preprocess_testset()
     # create_cbk()
