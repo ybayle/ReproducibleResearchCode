@@ -145,7 +145,7 @@ def create_dir(dir_name):
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
     dir_name = abs_path_dir(dir_name)
-    if dir_name[-1] != "/" or dir_name[-1] != "\\":
+    if dir_name[-1] != "/" and dir_name[-1] != "\\":
         dir_name += os.sep
     return dir_name
 

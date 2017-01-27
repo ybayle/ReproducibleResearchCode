@@ -23,6 +23,9 @@ import webbrowser
 import multiprocessing
 from datetime import datetime
 from functools import partial
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import precision_recall_curve, precision_score, recall_score, classification_report, f1_score, accuracy_score
+from statistics import stdev
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -190,7 +193,7 @@ def create_cbk(vqmm_cmd, files_list, file_cbk):
     subprocess.call([vqmm_cmd, '-quiet', 'n', '-list-of-files', files_list, 
         '-random', randomSeed, '-codebook-size', codebookSize, '-codebook', file_cbk])
 
-def train(models_dir, list_of_files):
+def train(vqmm_cmd, codebook_file, models_dir, list_of_files):
     epsilon = "0.00001"
     subprocess.call([vqmm_cmd, '-quiet', 'n', 
         '-output-dir', models_dir,
@@ -198,11 +201,11 @@ def train(models_dir, list_of_files):
         '-epsilon', epsilon, 
         '-codebook', codebook_file, '-make-tag-models'])
 
-def test(outputdir="res/", models_file="models_file.txt", testfile="test.txt"):
+def test(vqmm_cmd, codebook_file, outputdir="res/", models_file="models_file.txt", testfile="test.txt"):
     subprocess.call([vqmm_cmd, '-tagify', '-output-dir', outputdir, '-models', models_file, 
         '-codebook', codebook_file, '-list-of-files', testfile])
 
-def experiment_1():
+def experiment_1(vqmm_cmd, codebook_file):
     """Description of experiment_1
     5-folds Cross-validation on 186 tracks evenly distributed
 
@@ -212,14 +215,14 @@ def experiment_1():
     """
     utils.print_success("Experiment 1 (approx. 10min)")
 
-    # create 5 folds for train/test
+    # # create 5 folds for train/test
     dir_tmp = utils.create_dir(utils.create_dir("tmp") + "vqmm")
     dir_folds = utils.create_dir(dir_tmp + "folds")
     names = []
     groundtruths = []
-    with open("groundtruths/database1.csv", "r") as filep:
+    with open("tmp/vqmm/filelist.txt", "r") as filep:
         for line in filep:
-            line = line[:-1].split(",")
+            line = line[:-1].split("\t")
             names.append(line[0])
             groundtruths.append(line[1])
     names = np.array(names)
@@ -239,14 +242,22 @@ def experiment_1():
 
         # train and test on each folds.
         dir_res = utils.create_dir(dir_tmp + "fold_" + str(index))
-        train("models/", dir_folds + "train.txt")
-        test(outputdir=dir_res, models_file="models_file.txt", testfile=dir_folds + "test.txt")
+        dir_models = utils.create_dir(dir_tmp + "models")
+        train(vqmm_cmd, codebook_file, dir_models, dir_folds + "train.txt")
+        # Need to explicitly create models_file here for VQMM
+        models_list = os.listdir(dir_models)
+        models_file = dir_tmp + "models_file.txt"
+        with open(models_file, "w") as filep:
+            for model_path in models_list:
+                if not "NOT" in model_path:
+                    filep.write(dir_models + model_path + "\n")
+        test(vqmm_cmd, codebook_file, outputdir=dir_res, models_file=models_file, testfile=dir_folds + "test.txt")
     
     acc = []
     f1 = []
     for index in range(1, 6):
-        predsfile = "folds/fold_" + str(index) + "/test.cbkcodebookFile.perItemCL.txt"
-        gtsfile = "folds/fold_" + str(index) + "/test.cbkcodebookFile.perItemGT.txt"
+        predsfile = dir_tmp + "fold_" + str(index) + "/test.cbkcodebook.perItemCL.txt"
+        gtsfile = dir_tmp + "fold_" + str(index) + "/test.cbkcodebook.perItemGT.txt"
         preds = read_item_tag(predsfile)
         gts = read_item_tag(gtsfile)
         groundtruths = []
@@ -274,10 +285,10 @@ def experiment_1():
     #     for val in f1:
     #         filep.write("," + str(val))
     #     filep.write("\n")
-    with open("../stats/table1_accuracy.csv", "a") as filep:
+    with open(dir_tmp + "table1_accuracy.csv", "a") as filep:
         for val in acc:
             filep.write("VQMM," + str(val) + "\n")
-    with open("../stats/table1_f1.csv", "a") as filep:
+    with open(dir_tmp + "table1_f1.csv", "a") as filep:
         for val in f1:
             filep.write("VQMM," + str(val) + "\n")
 
@@ -317,11 +328,28 @@ def main():
 
     # 4
     # Need to compile VQMM and check that everything is ok
+    utils.print_success("Compiling VQMM")
     vqmm_cmd = "src/vqmm/vqmm"
-    os.system("")
+    os.system("make -C src/vqmm/src")
+
+    # 5
+    # Create codebook needed for VQMM
     file_cbk = dir_tmp + "codebook.txt"
     create_cbk(vqmm_cmd, filenames_gts, file_cbk)
-    # experiment_1()
+
+    # 5 
+    # now cbk created can make expe1 !
+    experiment_1(vqmm_cmd, file_cbk)
+
+    # randomSeed = "1"
+    # codebookSize = "100"    
+#     [0.92105263157894735, 0.81578947368421051, 0.78947368421052633, 0.80555555555555558, 0.77777777777777779]
+# [0.92099792099792099, 0.81566181566181561, 0.78888888888888897, 0.80540540540540539, 0.77708978328173373]
+# Accuracy 0.821929824561 ± 0.057301735896627654
+# F-Measure 0.821608762847 ± 0.05750793298432727
+
+
+    # 6 TODO
     # preprocess_testset()
     # create_cbk()
     # train()
