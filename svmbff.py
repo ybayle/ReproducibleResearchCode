@@ -13,6 +13,8 @@
 Description of svmbff.py
 ======================
 
+bextract -mfcc -zcrs -ctd -rlf -flx -ws 1024 -as 898 -sv -fe filename.mf -w out.arff
+
 :Example:
 
 python svmbff.py
@@ -79,41 +81,38 @@ def merge_arff(indir, outfilename):
     """
     utils.print_success("Preprocessing ARFFs")
     indir = utils.abs_path_dir(indir)
-    tmpfilename = "tmp_arff.txt"
-    os.system("ls " + indir + "*.arff > " + tmpfilename)
-    with open(tmpfilename, 'r') as filenames:
-        outfn = open(outfilename, 'w')
-        cpt_invalid_fn = 0
-        # Write first lines of ARFF template file
-        for filename in filenames:
-            new_fn = validate_arff(filename[:-1])
-            if new_fn:
-                with open(new_fn, 'r') as template:
-                    nb_line = 77
-                    for line in template:
-                        if not nb_line:
-                            break
-                        nb_line -= 1
-                        outfn.write(line)
-                    break
-            else:
-                cpt_invalid_fn += 1
-        # Append all arff file to the output file
-        cur_file_num = 1
-        for filename in filenames:
-            new_fn = validate_arff(filename[:-1])
-            if new_fn:
-                cur_file_num = cur_file_num + 1
-                utils.print_progress_start("Analysing file\t" + str(cur_file_num))
-                fname = open(new_fn, 'r')
-                outfn.write("".join(fname.readlines()[74:77]))
-                fname.close()
-            else:
-                cpt_invalid_fn += 1
-        utils.print_progress_end()
-        outfn.close()
-    os.remove(tmpfilename)
-    os.system("rm " + indir + "*.arff")
+    filenames = os.listdir(indir)
+    outfn = open(outfilename, 'w')
+    cpt_invalid_fn = 0
+    # Write first lines of ARFF template file
+    for filename in filenames:
+        new_fn = validate_arff(indir + filename)
+        if new_fn:
+            with open(new_fn, 'r') as template:
+                nb_line = 77
+                for line in template:
+                    if not nb_line:
+                        break
+                    nb_line -= 1
+                    outfn.write(line)
+                break
+        else:
+            cpt_invalid_fn += 1
+    # Append all arff file to the output file
+    cur_file_num = 1
+    for filename in filenames:
+        new_fn = validate_arff(indir + filename)
+        if new_fn:
+            cur_file_num = cur_file_num + 1
+            utils.print_progress_start("Analysing file\t" + str(cur_file_num))
+            fname = open(new_fn, 'r')
+            outfn.write("".join(fname.readlines()[74:77]))
+            fname.close()
+        else:
+            cpt_invalid_fn += 1
+    utils.print_progress_end()
+    outfn.close()
+    # os.system("rm " + indir + "*.arff")
     if cpt_invalid_fn:
         utils.print_warning(str(cpt_invalid_fn) + " ARFF with errors found")
     return outfilename
@@ -140,6 +139,11 @@ def add_groundtruth(feature_fn, groundtruth_fn, output_fn):
         groundtruths[row[0]] = row[1]
     tags = []
     output = open(output_fn, "w")
+    
+    # switch if test set preprocessing
+    # separator = "_"
+    separator = "."
+
     with open(feature_fn, "r") as feat:
         line_num = 0
         tmp_line = ""
@@ -149,7 +153,7 @@ def add_groundtruth(feature_fn, groundtruth_fn, output_fn):
                 if line[0] != "%":
                     # Alter feature line with correct tag
                     cur_line = line.split(",")
-                    old_tag = cur_line[-1].split(".")[0]
+                    old_tag = cur_line[-1].split(separator)[0]
                     if old_tag in groundtruths:
                         new_tag = groundtruths[old_tag]
                         output.write(tmp_line + ",".join(cur_line[:-1]) + "," + new_tag +"\n")
@@ -278,14 +282,34 @@ def create_folds(filelist, nb_folds, folds_dir, invert_train_test=False):
             filep.close()
     return folds_dir
 
-def run_kea(train_file, test_file, out_file):
+def process_results(in_fn, out_fn):
+    in_fn = utils.abs_path_file(in_fn)
+    out_fp = open(out_fn, "w")
+    with open(in_fn, "r") as filep:
+        for index, line in enumerate(filep):
+            if index % 2:
+                row = line[:-1].split("\t")
+                out_fp.write(row[0].split("_")[0] + "," + row[2] + "\n")
+    out_fp.close()
+
+def experiment_2_3():
+    process_results("tmp/svmbff/SVMBFF.csv", "predictions/SVMBFF.csv")
+
+def run_kea(train_file, test_file, out_file, verbose=False):
     """Description of run_kea
 
     Launch kea classification on specified file
     """
     kea_cmd = 'kea -m tags -w ' + train_file + ' -tw ' + test_file + ' -pr ' + out_file
-    os.system(kea_cmd + "> /dev/null 2>&1")
-    os.system("rm *affinities*")
+    if not verbose:
+        kea_cmd += "> /dev/null 2>&1"
+    os.system(kea_cmd)
+    train_dir = train_file.split(os.sep)
+    train_dir = os.sep.join(train_dir[:-1])
+    os.system("rm " + train_dir + "/*affinities*")
+    test_dir = test_file.split(os.sep)
+    test_dir = os.sep.join(test_dir[:-1])
+    os.system("rm " + test_dir + "/*affinities*")
 
 def run_kea_on_folds(folds_dir):
     """Description of run_kea_on_folds

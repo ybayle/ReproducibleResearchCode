@@ -244,29 +244,29 @@ def scores(algo_name, predictions, groundtruths):
     # Print average ± standard deviation
     print(algo_name)
     print("Accuracy " + str(sum(acc)/float(len(acc))) + " ± " + str(stdev(acc)))
-    print("F-Measure " + str(sum(f1)/float(len(f1))) + " ± " + str(stdev(f1)))
+    # print("F-Measure " + str(sum(f1)/float(len(f1))) + " ± " + str(stdev(f1)))
 
-    if ".csv" in algo_name:
-        algo_name = algo_name[:-4]
-    if "'" in algo_name:
-        algo_name = algo_name[:-1]
+    # if ".csv" in algo_name:
+    #     algo_name = algo_name[:-4]
+    # if "'" in algo_name:
+    #     algo_name = algo_name[:-1]
 
-    with open("../stats/table2_accuracy_R.csv", "a") as filep:
-        for val in acc:
-            filep.write(algo_name + "," + str(val) + "\n")
-    with open("../stats/table2_f1_R.csv", "a") as filep:
-        for val in f1:
-            filep.write(algo_name + "," + str(val) + "\n")
-    with open("../stats/table2_accuracy.csv", "a") as filep:
-        filep.write(algo_name)
-        for val in acc:
-            filep.write("," + str(val))
-        filep.write("\n")
-    with open("../stats/table2_f1.csv", "a") as filep:
-        filep.write(algo_name)
-        for val in f1:
-            filep.write("," + str(val))
-        filep.write("\n")
+    # with open("../stats/table2_accuracy_R.csv", "a") as filep:
+    #     for val in acc:
+    #         filep.write(algo_name + "," + str(val) + "\n")
+    # with open("../stats/table2_f1_R.csv", "a") as filep:
+    #     for val in f1:
+    #         filep.write(algo_name + "," + str(val) + "\n")
+    # with open("../stats/table2_accuracy.csv", "a") as filep:
+    #     filep.write(algo_name)
+    #     for val in acc:
+    #         filep.write("," + str(val))
+    #     filep.write("\n")
+    # with open("../stats/table2_f1.csv", "a") as filep:
+    #     filep.write(algo_name)
+    #     for val in f1:
+    #         filep.write("," + str(val))
+    #     filep.write("\n")
 
     # # Write 
     # with open(data_file, "w") as outfile:

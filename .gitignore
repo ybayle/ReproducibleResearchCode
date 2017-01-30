@@ -2,9 +2,10 @@
 *.wav
 *.mp3
 *.ogg
-features/
-results/
 tmp/
+results/
+predictions/
+features/svmbff_database1.arff
 
 # Below is automatically generated code
 # Byte-compiled / optimized / DLL files
