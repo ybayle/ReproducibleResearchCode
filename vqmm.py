@@ -338,7 +338,7 @@ def main():
     create_cbk(vqmm_cmd, filenames_gts, file_cbk)
 
     # 5 
-    # now cbk created can make expe1 !
+    # launch expe1
     experiment_1(vqmm_cmd, file_cbk)
 
     # randomSeed = "1"
