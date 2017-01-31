@@ -5,7 +5,7 @@
 # E-mail    bayle.yann@live.fr
 # License   MIT
 # Created   19/01/2017
-# Updated   20/01/2017
+# Updated   30/01/2017
 # Version   1.0.0
 #
 
@@ -19,18 +19,17 @@ Launch source code file in order to reproduce results of the article
 
 python reproducibility.py
 
-
 """
 
 import os
 import sys
+from statistics import mean, stdev
+from sklearn.metrics import precision_recall_curve, precision_score, recall_score, classification_report, f1_score, accuracy_score
+sys.path.insert(0, './src/')
 import isrc
 import utils
 import ghosal
 import svmbff
-# import urllib
-from statistics import mean, stdev
-from sklearn.metrics import precision_recall_curve, precision_score, recall_score, classification_report, f1_score, accuracy_score
 
 utils.print_warning("You need a python 2 environment.")
 utils.print_warning("You need at least 150Go of free space and to store tracks in a dir named: tracks/")
@@ -237,6 +236,7 @@ def main():
     # svmbff_out = dir_tmp + "SVMBFF.csv"
     # svmbff.run_kea(svmbff_train, svmbff_test, svmbff_out)
     # svmbff.experiment_2_3()
+    # ghosal.experiments_2_3("tmp/ghosal/database1.csv")
 
     experiment_2()
     experiment_3()
