@@ -133,6 +133,11 @@ def experiment_2():
     for pred_file in predictions_files:
         algo_name = pred_file.split("/")[-1][:-4]
         utils.print_info(algo_name)
+        if "Ghosal" in algo_name:
+            # Change threshold as RANSAC does not produces pred in [0;1] 
+            threshold = 0.
+        else:
+            threshold = 0.5
         test_groundtruths = []
         predictions = []
         with open(dir_pred + pred_file, "r") as filep:
@@ -141,7 +146,7 @@ def experiment_2():
                 isrc = row[0]
                 if isrc in gts:
                     test_groundtruths.append(gts[isrc]) 
-                    predictions.append("s" if float(row[1])>0.5 else "i")
+                    predictions.append("s" if float(row[1]) > threshold else "i")
         results_experiment_2(algo_name, predictions, test_groundtruths)
 
     algo_name = "Random"
@@ -161,6 +166,11 @@ def experiment_3():
     for pred_file in predictions_files:
         algo_name = pred_file.split("/")[-1][:-4]
         utils.print_info(algo_name)
+        if "Ghosal" in algo_name:
+            # Change threshold as RANSAC does not produces pred in [0;1] 
+            threshold = 0.
+        else:
+            threshold = 0.5
 
         test_groundtruths = []
         predictions = []
@@ -170,7 +180,7 @@ def experiment_3():
                 isrc = row[0]
                 if isrc in gts:
                     test_groundtruths.append(gts[isrc]) 
-                    predictions.append("s" if float(row[1])>0.5 else "i")
+                    predictions.append("s" if float(row[1]) > threshold else "i")
         
         print("Accuracy : " + str(accuracy_score(test_groundtruths, predictions)))
         print("F-score  : " + str(f1_score(test_groundtruths, predictions, average='weighted')))

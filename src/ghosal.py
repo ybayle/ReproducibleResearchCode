@@ -25,6 +25,7 @@ import math
 import utils
 import random
 import joblib
+import pandas
 from pprint import pprint
 import numpy as np
 import matplotlib.pyplot as plt
@@ -130,26 +131,22 @@ def classify(file_features):
             filep.write("Ghosal'," + str(val) + "\n")
 
 def read_files(dir_features):
-    utils.print_success("Preprocessing YAAFE's features  (approx. 2 minutes)")
+    utils.print_success("Preprocessing YAAFE's features  (approx. 20 minutes)")
     tmp_gts = utils.read_groundtruths("groundtruths/database2.csv")
     dir_features = utils.abs_path_dir(dir_features)
     filenames = os.listdir(dir_features)
     dir_tmp = utils.create_dir(utils.create_dir("tmp") + "ghosal")
-    tmp_mfcc = [0, ] * 13
     features = []
     groundtruths = []
+    to_print =  "/" + str(len(filenames))
     for index, filename in enumerate(filenames):
-        utils.print_progress_start(str(index+1) + "/" + str(len(filenames)) + " " + filename)
-        with open(dir_features + filename, "r") as filep:
-            for line_index, line in enumerate(filep):
-                    mfccs = line.split(" ")
-                    for mfcc_index, mfcc in enumerate(mfccs):
-                        tmp_mfcc[mfcc_index] += float(mfcc)
-            tmp_mfcc = [x / (line_index + 1) for x in tmp_mfcc]
-            filen = filename.split("_")[0]
-            if filen in tmp_gts:
-                groundtruths.append(tmp_gts[filen])
-                features.append(tmp_mfcc)
+        utils.print_progress_start(str(index+1) + to_print)
+        # pandas used here because fastest method to read csv fils
+        data = pandas.read_csv(dir_features + filename, sep=" ").values
+        filen = filename.split("_")[0]
+        if filen in tmp_gts:
+            groundtruths.append(tmp_gts[filen])
+            features.append([ sum(x)/len(data) for x in zip(*data) ])
     return filenames, features, groundtruths
 
 def experiments_2_3(train_file):
@@ -158,15 +155,17 @@ def experiments_2_3(train_file):
     clf.fit(train_features, train_groundtruths)
     test_filenames, test_features, test_groundtruths = read_files("/media/sf_DATA/IEEE2017/features/yaafe/")
     preds_float = clf.predict(test_features)
-    # predictions = ["s" if i > 0.5 else "i" for i in preds_float]
-    max_pred = max(preds_float)
-    min_pred = min(preds_float)
-    tmp_preds = [(i / (max_pred - min_pred)) for i in preds_float]
-    min_tmp_preds = min(tmp_preds)
-    with open("../predictions/Ghosal.csv", "w") as filep:
-        for filen, pred in zip(test_filenames, tmp_preds):
-            pred = pred - min_tmp_preds
-            print(pred)
+    predictions = ["s" if i >= 0.5 else "i" for i in preds_float]
+    # max_pred = max(preds_float)
+    # min_pred = min(preds_float)
+    # tmp_preds = [(i / (max_pred - min_pred)) for i in preds_float]
+    # min_tmp_preds = min(tmp_preds)
+    with open("predictions/Ghosal.csv", "w") as filep:
+        # for filen, pred in zip(test_filenames, predictions):
+        for filen, pred in zip(test_filenames, preds_float):
+        # for filen, pred in zip(test_filenames, tmp_preds):
+            # pred = pred - min_tmp_preds
+        #     print(pred)
             # sys.exit()
             filep.write(filen.split("_")[0] + "," + str(pred) + "\n")
 
