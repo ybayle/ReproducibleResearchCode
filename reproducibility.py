@@ -28,6 +28,7 @@ from sklearn.metrics import precision_recall_curve, precision_score, recall_scor
 sys.path.insert(0, './src/')
 import isrc
 import vqmm
+import stats
 import utils
 import ghosal
 import svmbff
@@ -259,7 +260,9 @@ def main():
     # outdir = utils.create_dir("figures")
     # classify.plot_roc(indir, gts_file, outdir)
 
-    bayle.main()
+    # TODO
+    # stats.main() # make 10 replicates for expe1
+    # bayle.main()
 
 if __name__ == "__main__":
     main()

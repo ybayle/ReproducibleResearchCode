@@ -869,7 +869,7 @@ def plot_roc(indir, gts_file, outdir):
     # plt.title('ROC curve for Algo (AUC)')
     plt.legend(loc='best')
     outdir = utils.abs_path_dir(outdir)
-    plt.savefig(outdir + "ROC.png", dpi=200, bbox_inches="tight")
+    plt.savefig(outdir + "Figure_3_ROC.png", dpi=200, bbox_inches="tight")
     # plt.show()
     plt.close()
 
