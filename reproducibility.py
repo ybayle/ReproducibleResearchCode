@@ -254,10 +254,12 @@ def main():
     # experiment_2()
     # experiment_3()
 
-    indir = "predictions"
-    gts_file = "groundtruths/database2.csv"
-    outdir = utils.create_dir("figures")
-    classify.plot_roc(indir, gts_file, outdir)
+    # indir = "predictions"
+    # gts_file = "groundtruths/database2.csv"
+    # outdir = utils.create_dir("figures")
+    # classify.plot_roc(indir, gts_file, outdir)
+
+    bayle.main()
 
 if __name__ == "__main__":
     main()
