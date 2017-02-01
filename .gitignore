@@ -6,6 +6,7 @@ tmp/
 results/
 predictions/
 features/
+figures/
 
 # Below is automatically generated code
 # Byte-compiled / optimized / DLL files

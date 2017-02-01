@@ -31,6 +31,7 @@ import vqmm
 import utils
 import ghosal
 import svmbff
+import classify
 
 utils.print_warning("You need a python 2 environment.")
 utils.print_warning("You need at least 150Go of free space and to store tracks in a dir named: tracks/")
@@ -249,9 +250,14 @@ def main():
     # svmbff.experiment_2_3()
     # ghosal.experiments_2_3("tmp/ghosal/database1.csv")
 
-    vqmm.process_results()
-    experiment_2()
-    experiment_3()
+    # vqmm.process_results()
+    # experiment_2()
+    # experiment_3()
+
+    indir = "predictions"
+    gts_file = "groundtruths/database2.csv"
+    outdir = utils.create_dir("figures")
+    classify.plot_roc(indir, gts_file, outdir)
 
 if __name__ == "__main__":
     main()
