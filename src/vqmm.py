@@ -117,21 +117,6 @@ def train_on_test():
     train()
     test("res186/", "models_file186.txt", "train186.txt")
 
-def process_results():
-    tmp_gts = utils.get_test_gts()
-    predictions = []
-    groundtruths = []
-    res_dir = "res/"
-    utils.create_dir(res_dir)
-    res_file = open(res_dir + "VQMM.csv", "w")
-    with open("vqmm/results_uneven/test.cbkcodebookFile.perItemCL.txt", "r") as filep:
-        for line in filep:
-            line = line.split("\t")
-            isrc = line[0][4:16]
-            if isrc in tmp_gts:
-                res_file.write(isrc + "," + line[1] + "\n")
-    res_file.close()
-
 def read_item_tag(filename):
     filename = utils.abs_path_file(filename)
     data = {}
@@ -293,7 +278,7 @@ def experiment_1(vqmm_cmd, codebook_file):
             filep.write("VQMM," + str(val) + "\n")
 
 def experiments_2_3(vqmm_cmd, codebook_file):
-    utils.print_success("Experiment 2 & 3 (approx. 10min)")
+    utils.print_success("Experiment 2 & 3 (approx. 5h30m")
     dir_tmp = utils.create_dir(utils.create_dir("tmp") + "vqmm")
     
     # train
@@ -322,6 +307,22 @@ def experiments_2_3(vqmm_cmd, codebook_file):
     # disp results
     utils.print_success("Experiment 2 & 3 Done processing")
 
+def process_results():
+    tmp_gts = utils.read_groundtruths("groundtruths/database2.csv")
+    predictions = []
+    groundtruths = []
+    res_dir = utils.create_dir("predictions/")
+    res_file = open(res_dir + "VQMM.csv", "w")
+    vqmm_resfile = "src/tmp/vqmm/results_expe2_3/test_file_list.cbkcodebook.perItemCL.txt"
+    with open(vqmm_resfile, "r") as filep:
+        for line in filep:
+            line = line.split("\t")
+            isrc = line[0][4:16]
+            if isrc in tmp_gts:
+                # res_file.write(isrc + "," + line[1] + "\n")
+                res_file.write(isrc + "," + str([0 if "i" in line[1] else 1][0]) + "\n")
+    res_file.close()
+
 def main():
     """
     1 
@@ -329,49 +330,51 @@ def main():
     3 Train 200
     4 Test 50k
     """
-    utils.print_success("VQMM (approx. 35min)")
+    utils.print_success("VQMM (approx. 6h)")
 
-    # 1 
-    # preprocess features
-    # YAAFE produce files which contain unusable float format
-    # Need to transfroms those into a valid format
-    # preprocess_features("../features/database1/")
+    # # 1 
+    # # preprocess features
+    # # YAAFE produce files which contain unusable float format
+    # # Need to transfroms those into a valid format
+    # # preprocess_features("../features/database1/")
 
-    # 2
-    # Read filenames & groundtruths
-    groundtruths = {}
-    with open("../groundtruths/database1.csv", "r") as filep:
-        for line in filep:
-            row = line[:-1].split(",")
-            groundtruths[row[0]] = row[1]
+    # # 2
+    # # Read filenames & groundtruths
+    # groundtruths = {}
+    # with open("../groundtruths/database1.csv", "r") as filep:
+    #     for line in filep:
+    #         row = line[:-1].split(",")
+    #         groundtruths[row[0]] = row[1]
 
-    # 3
-    # VQMM needs a special file containing path & filename along ground truth.
-    dir_feats = utils.abs_path_dir("../features/database1/")
-    files_list = os.listdir(dir_feats)
-    dir_tmp = utils.create_dir(utils.create_dir("tmp") + "vqmm")
-    filenames_gts = dir_tmp + "filelist.txt"
-    with open(filenames_gts, "w") as filep:
-        for filename in files_list:
-            fn = filename.split(".")[0]
-            filep.write(dir_feats + filename + "\t" + groundtruths[fn] + "\n")
+    # # 3
+    # # VQMM needs a special file containing path & filename along ground truth.
+    # dir_feats = utils.abs_path_dir("../features/database1/")
+    # files_list = os.listdir(dir_feats)
+    # dir_tmp = utils.create_dir(utils.create_dir("tmp") + "vqmm")
+    # filenames_gts = dir_tmp + "filelist.txt"
+    # with open(filenames_gts, "w") as filep:
+    #     for filename in files_list:
+    #         fn = filename.split(".")[0]
+    #         filep.write(dir_feats + filename + "\t" + groundtruths[fn] + "\n")
 
-    # 4
-    # Need to compile VQMM and check that everything is ok
-    utils.print_success("Compiling VQMM")
-    vqmm_cmd = "vqmm/vqmm"
-    os.system("make -C vqmm/src")
+    # # 4
+    # # Need to compile VQMM and check that everything is ok
+    # utils.print_success("Compiling VQMM")
+    # vqmm_cmd = "vqmm/vqmm"
+    # os.system("make -C vqmm/src")
 
-    # 5
-    # Create codebook needed for VQMM
-    file_cbk = dir_tmp + "codebook.txt"
-    create_cbk(vqmm_cmd, filenames_gts, file_cbk)
+    # # 5
+    # # Create codebook needed for VQMM
+    # file_cbk = dir_tmp + "codebook.txt"
+    # create_cbk(vqmm_cmd, filenames_gts, file_cbk)
 
-    # 5 
-    # launch expe1
-    # experiment_1(vqmm_cmd, file_cbk)
+    # # 5 
+    # # launch expe1
+    # # experiment_1(vqmm_cmd, file_cbk)
     
-    experiments_2_3(vqmm_cmd, file_cbk)
+    # experiments_2_3(vqmm_cmd, file_cbk)
+    process_results()
+
 
     # randomSeed = "1"
     # codebookSize = "100"    
@@ -386,7 +389,6 @@ def main():
     # create_cbk()
     # train()
     # test()
-    # process_results()
 
 if __name__ == "__main__":
     main()

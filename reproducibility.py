@@ -249,9 +249,9 @@ def main():
     # svmbff.experiment_2_3()
     # ghosal.experiments_2_3("tmp/ghosal/database1.csv")
 
-    vqmm.experiments_2_3()
-    # experiment_2()
-    # experiment_3()
+    vqmm.process_results()
+    experiment_2()
+    experiment_3()
 
 if __name__ == "__main__":
     main()
