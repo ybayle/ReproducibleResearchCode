@@ -5,7 +5,7 @@
 tmp/
 results/
 predictions/
-features/svmbff_database1.arff
+features/
 
 # Below is automatically generated code
 # Byte-compiled / optimized / DLL files

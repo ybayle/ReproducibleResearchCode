@@ -27,6 +27,7 @@ from statistics import mean, stdev
 from sklearn.metrics import precision_recall_curve, precision_score, recall_score, classification_report, f1_score, accuracy_score
 sys.path.insert(0, './src/')
 import isrc
+import vqmm
 import utils
 import ghosal
 import svmbff
@@ -248,8 +249,9 @@ def main():
     # svmbff.experiment_2_3()
     # ghosal.experiments_2_3("tmp/ghosal/database1.csv")
 
-    experiment_2()
-    experiment_3()
+    vqmm.experiments_2_3()
+    # experiment_2()
+    # experiment_3()
 
 if __name__ == "__main__":
     main()
