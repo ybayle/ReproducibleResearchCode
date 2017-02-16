@@ -400,7 +400,7 @@ def create_model(clf_name, features, groundtruths, outdir, classifiers):
     joblib.dump(clf, clf_dir + clf_name + ".pkl")
     utils.print_info(clf_name + " done in " + str(int(round(time.time() * 1000)) - begin) + "ms")
 
-def create_models(outdir, train_features=None, train_groundtruths=None, train_file=None, train_dir=None, separator=" "):
+def create_models(outdir, train_features=None, train_groundtruths=None, train_file=None, train_dir=None, separator=" ", classifiers=None):
     """Description of create_models
 
     Generate models for train data for different clf
@@ -448,33 +448,46 @@ def create_models(outdir, train_features=None, train_groundtruths=None, train_fi
     else:
         utils.print_warning("TODO Manage train feat and gts")
 
-    classifiers = {
-        "RandomForest": RandomForestClassifier(),
-        "LogisticRegression":LogisticRegression(),
-        "KNeighbors":KNeighborsClassifier(),
-        "DecisionTree":DecisionTreeClassifier(),
-        "AdaBoost":AdaBoostClassifier(),
-        "GradientBoosting":GradientBoostingClassifier(),
-        "ExtraTrees":ExtraTreesClassifier(),
-        "SVM":SVC(kernel="linear", C=0.025, probability=True)
+    if classifiers is None:
+        classifiers = {
+            "RandomForest": RandomForestClassifier(),
+            "LogisticRegression":LogisticRegression(),
+            "KNeighbors":KNeighborsClassifier(),
+            "DecisionTree":DecisionTreeClassifier(),
+            "AdaBoost":AdaBoostClassifier(),
+            "GradientBoosting":GradientBoostingClassifier(),
+            "ExtraTrees":ExtraTreesClassifier(),
+            "SVM":SVC(kernel="linear", C=0.025, probability=True)
 
-        # "GaussianProcess":GaussianProcessClassifier(),
-        # "MLP":MLPClassifier(),
-        # "GaussianNB":GaussianNB(),
-        # "QDA":QuadraticDiscriminantAnalysis(),
-        # "LinearDiscriminantAnalysis":LinearDiscriminantAnalysis()
-    }
+            # "GaussianProcess":GaussianProcessClassifier(),
+            # "MLP":MLPClassifier(),
+            # "GaussianNB":GaussianNB(),
+            # "QDA":QuadraticDiscriminantAnalysis(),
+            # "LinearDiscriminantAnalysis":LinearDiscriminantAnalysis()
+        }
+    else:
+        if "RandomForest" in classifiers:
+            clf_name = "RandomForest"
+            begin = int(round(time.time() * 1000))
+            utils.print_success("Starting " + clf_name)
+            clf_dir = outdir + clf_name + "/"
+            utils.create_dir(clf_dir)
+            clf = RandomForestClassifier(n_jobs=-1)
+            # clf = RandomForestClassifier(verbose=100)
+            clf.fit(features, groundtruths)
+            joblib.dump(clf, clf_dir + clf_name + ".pkl")
+            utils.print_info(clf_name + " done in " + str(int(round(time.time() * 1000)) - begin) + "ms")
 
-    # Parallel computing
-    clf = []
-    for key in classifiers:
-        clf.append(key)
-    partial_create_model = partial(create_model, features=features, groundtruths=groundtruths, outdir=outdir, classifiers=classifiers)
-    # pool = multiprocessing.Pool(4)
-    pool = multiprocessing.Pool(len(classifiers))
-    pool.map(partial_create_model, clf) #make our results with a map call
-    pool.close() #we are not adding any more processes
-    pool.join() #tell it to wait until all threads are done before going on
+    # # Parallel computing
+    # clf = []
+    # for key in classifiers:
+    #     clf.append(key)
+    # partial_create_model = partial(create_model, features=features, groundtruths=groundtruths, outdir=outdir, classifiers=classifiers)
+    # # pool = multiprocessing.Pool(4)
+    # pool = multiprocessing.Pool(len(classifiers))
+    # pool.map(partial_create_model, clf) #make our results with a map call
+    # pool.close() #we are not adding any more processes
+    # pool.join() #tell it to wait until all threads are done before going on
 
 def read_test_file(filename):
     """

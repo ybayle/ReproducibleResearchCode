@@ -26,10 +26,11 @@ import sys
 from statistics import mean, stdev
 from sklearn.metrics import precision_recall_curve, precision_score, recall_score, classification_report, f1_score, accuracy_score
 sys.path.insert(0, './src/')
-import isrc
+# import isrc
 import vqmm
 import stats
 import utils
+import bayle
 import ghosal
 import svmbff
 import classify
@@ -204,7 +205,7 @@ def main():
     """Description of main
     """
 
-    utils.print_success("Reproducible research (approx. 30 minutes)")
+    utils.print_success("Reproducible research (approx. 8h)")
 
     # Variables
     # groundtruths_filename = "groundtruths.csv"
@@ -260,9 +261,9 @@ def main():
     # outdir = utils.create_dir("figures")
     # classify.plot_roc(indir, gts_file, outdir)
 
+    bayle.main()
     # TODO
     # stats.main() # make 10 replicates for expe1
-    # bayle.main()
 
 if __name__ == "__main__":
     main()

@@ -99,10 +99,8 @@ from sklearn.metrics import precision_recall_curve, precision_score, recall_scor
 from sklearn import linear_model
 from sklearn.tree import DecisionTreeClassifier
 
-sys.path.insert(0, '/media/sf_github/classifiers')
 import classify
-sys.path.insert(0, '/media/sf_github/repro')
-import reproduce
+# import reproduce
 
 def arr2str(data, separator=","):
     return separator.join(str(x) for x in data)
@@ -117,6 +115,75 @@ def read_gts(filename, separator="\t"):
             line = line.split(separator)
             track_gts[line[0]] = line[1][:-1]
     return track_gts
+
+def match_feat_with_song_gt(dir_feat, dir_gts):
+    """Description of match_feat_gt
+
+    Use groundtruth created by 
+    http://www.mathieuramona.com/wp/data/jamendo/ 
+
+    associate to local features
+    csv 7041 lines yaafe
+    lab 326.973 sec ramona
+    Definition of YAAFE from 
+    http://yaafe.sourceforge.net/features.html
+    """
+    utils.print_success("Matching local feat to song/instru groundtruths")
+    dir_feat = utils.abs_path_dir(dir_feat)
+    dir_gts = utils.abs_path_dir(dir_gts)
+    block_size = 1024.
+    step_size = 512.
+    fech = 22050.
+    frame_size_ms = block_size / fech
+    filenames = [fn for fn in os.listdir(dir_gts)]
+    for index, filename in enumerate(filenames):
+        utils.print_progress_start(str(index) + "/" + str(len(filenames)) + " " + filename)
+        # gather groundtruths
+        groundtruths = []
+        with open(dir_gts + filename, "r") as filep:
+            for row in filep:
+                line = row.split(" ")
+                end = float(line[1])
+                if "no" in line[2]:
+                    tag = ",i\n"
+                else:
+                    tag = ",s\n"
+                groundtruths.append([end, tag])
+        gt_len = len(groundtruths)
+        overflow = False
+        gt_index = 0
+        cpt = 0
+        # Write features & groundtruths to file
+        str_to_write = ""
+        feat_fn = filename.split(".")[0]
+        feat_fn += ".wav.mfcc.csv"
+        with open(dir_feat + feat_fn, "r") as filep:
+            for index, line in enumerate(filep):
+                # todo cleanup
+                if gt_index < gt_len:
+                    if frame_size_ms * index > groundtruths[gt_index][0]:
+                        gt_index += 1
+                    if gt_index < gt_len:
+                        str_to_write += line[:-1] + groundtruths[gt_index][1]
+        with open(dir_feat + feat_fn, "w") as filep:
+            filep.write(str_to_write)
+    utils.print_progress_end()
+
+def match_feat_with_instru_gt(indir, outdir):
+    """Description of match_feat_gt
+
+    Apply instru groundtruth to CCmixter and MedleyDB
+    """
+    utils.print_success("Matching local features to instrumental groundtruths")
+    indir = utils.abs_path_dir(indir) + "/"
+    outdir = utils.abs_path_dir(outdir) + "/"
+    filenames = [fn for fn in os.listdir(indir)]
+    for filename in filenames:
+        outfile = open(outdir + filename, "w")
+        with open(indir + filename, "r") as filep:
+            for line in filep:
+                outfile.write(line[:-1] + " i\n")
+        outfile.close()
 
 def process_local_feat(indir, file_gts_track, outdir_local, out_feat_global, train):
     """Description of process_local_feat
@@ -134,15 +201,15 @@ def process_local_feat(indir, file_gts_track, outdir_local, out_feat_global, tra
     track_gts = {}
     with open(file_gts_track, "r") as filep:
         for line in filep:
-            line = line.split("\t")
+            line = line.split(",")
             if train:
                 index = line[0]
             else:
-                index = line[0] + "_audio_full_mono_22k.wav.mfcc.csv"
+                index = line[0] + ".wav.mfcc.csv"
             track_gts[index] = line[1][:-1]
 
     for index, filename in enumerate(filelist):
-        utils.print_progress_start(str(index) + " " + filename)
+        utils.print_progress_start(str(index) + "/" + str(len(filelist)) + " " + filename)
         if filename in track_gts:
             mfccs = []
             groundtruths = []
@@ -157,12 +224,20 @@ def process_local_feat(indir, file_gts_track, outdir_local, out_feat_global, tra
             delta2_mfcc = librosa.feature.delta(mfccs, order=2)
             # Write local features in outdir_local
             with open(outdir_local + filename, "w") as filep:
+                gt_to_write = ""
+                if "i" in track_gts[filename]:
+                    gt_to_write = ",i"
+                elif "s" in track_gts[filename]:
+                    # postpone frame groundtruth annotationa to another function later in the code
+                    gt_to_write = ""
+                else:
+                    utils.print_warning("bayle.py line 231 local frame groundtruth undefined")
                 if train:
                     for a, b, c, d in zip(mfccs, delta_mfcc, delta2_mfcc, groundtruths):
                         filep.write(arr2str(a) + "," + arr2str(b) + "," + arr2str(c) + "," + d + "\n")
                 else:
                     for a, b, c in zip(mfccs, delta_mfcc, delta2_mfcc):
-                        filep.write(arr2str(a) + "," + arr2str(b) + "," + arr2str(c) + "\n")
+                        filep.write(arr2str(a) + "," + arr2str(b) + "," + arr2str(c) + gt_to_write + "\n")
             # # Write global features in out_feat_global
             # with open(out_feat_global, "a") as filep:
             #     filep.write(filename + "," +
@@ -171,6 +246,9 @@ def process_local_feat(indir, file_gts_track, outdir_local, out_feat_global, tra
             #         arr2str(np.mean(delta2_mfcc, axis=0)) + "," + 
             #         track_gts[filename] + "\n")
     utils.print_progress_end()
+    utils.print_success("Adding local groundtruths to Songs in Jamendo thanks to Ramona annotations")
+    match_feat_with_song_gt(dir_feat=outdir_local, dir_gts="groundtruths/frame_annot_jamendo_ramona/")
+    utils.print_success("Done")
 
 def column(matrix, i):
     return [row[i] for row in matrix]
@@ -221,7 +299,7 @@ def ngram(preds, tag):
         ngrams = [float(x) / nb_tag for x in ngrams]
     return ','.join(str(x) for x in ngrams)
 
-def create_track_feat_testset(folder, infile, outfile, train=False):
+def create_track_feat_testset(folder, infile, outfile, model_file, train=False):
     """Description of create_track_feat_testset
     Need to read each test file
     compute deltas on mfcc in the ram
@@ -234,18 +312,19 @@ def create_track_feat_testset(folder, infile, outfile, train=False):
     utils.print_success("Create track feat testset")
     folder = utils.abs_path_dir(folder)
     infile = utils.abs_path_file(infile)
-    clf = joblib.load("models/RandomForest/RandomForest.pkl")
-    track_gts = read_gts(infile)
+    clf = joblib.load(model_file)
+    track_gts = read_gts(infile, separator=",")
     for index, filename in enumerate(track_gts):
         utils.print_progress_start(str(index+1) + "/" + str(len(track_gts)) + " " + filename)
         mfccs = []
-        with open(folder + filename, "r") as filep:
+        with open(folder + filename + ".wav.mfcc.csv", "r") as filep:
             for line in filep:
                 line = line.split(" ")
-                if train:
-                    mfccs.append(str2arr(line[:-1]))
-                else:
-                    mfccs.append(str2arr(line[0:]))
+                mfccs.append(str2arr(line[:-1]))
+                # if train:
+                #     mfccs.append(str2arr(line[:-1]))
+                # else:
+                #     mfccs.append(str2arr(line[0:]))
 
         mfccs = np.array(mfccs)
         delta_mfcc = librosa.feature.delta(mfccs)
@@ -381,6 +460,38 @@ def read_file_bayle(filename):
 def column(matrix, i):
     return [row[i] for row in matrix]
 
+def new_algo_final(indir, file_gts_track):
+    # Preprocess arg
+    indir = utils.abs_path_dir(indir)
+    file_gts_track = utils.abs_path_file(file_gts_track)
+    dir_tmp = utils.create_dir(utils.create_dir("src/tmp") + "bayle")
+    feat_frame_train = utils.create_dir(dir_tmp + "feat_frame_train")
+    feat_frame_test = utils.create_dir(dir_tmp + "feat_frame_test")
+    outdir_global = utils.create_dir(dir_tmp + "feat_track")
+    feat_train = outdir_global + "train.csv"
+    feat_test = outdir_global + "test.csv"
+    models_dir = utils.create_dir(dir_tmp + "models")
+    loc_feat_testset_dirpath = "features/database2/"
+    filelist_test = "groundtruths/database2.csv"
+    filelist_train = "groundtruths/database1.csv"
+    models_global = utils.create_dir(dir_tmp + "models_track")
+
+    # process_local_feat(indir, file_gts_track, outdir_local=feat_frame_train, out_feat_global=feat_train, train=False)
+    # classify.create_models(outdir=models_dir, train_dir=feat_frame_train, separator=",", classifiers="RandomForest")
+
+    """
+    Create features at track scale for the train set
+    Features: MFCC + Delta + Double Delta + ngrams + hist
+    """
+    # model_file = "src/tmp/bayle/models/RandomForest/RandomForest.pkl"
+    model_file = "/media/sf_DATA/ReproducibleResearchIEEE2017/src/tmp/bayle/models/RandomForest/RandomForest.pkl"
+    create_track_feat_testset(indir, filelist_train, feat_train, model_file, train=True)
+
+    # # 15h28m44s to 19h08m28s Done in 13184117ms
+    # create_track_feat_testset(loc_feat_testset_dirpath, filelist_test, feat_test, model_file)  
+
+    # classify.create_models(outdir=models_global, train_file=feat_train, classifiers="RandomForest")
+
 def bayle_fig3():
     outdir_global = "/media/sf_DATA/Code/bayle/feat_track/"
     train = outdir_global + "train.csv"
@@ -408,8 +519,7 @@ def bayle_fig3():
         for name, pred in zip(test_fn, predictions):
             filep.write(name + "," + str(pred) + "\n")
 
-
-if __name__ == "__main__":
+def main():
     begin = int(round(time.time() * 1000))
     PARSER = argparse.ArgumentParser(description="Bayle et al. (2017) algorithm")
     PARSER.add_argument(
@@ -426,13 +536,19 @@ if __name__ == "__main__":
         type=str,
         default="filelist_train.tsv")
 
+    indir = "features/database1/"
+    file_gts_track = "groundtruths/database1.csv"
+    new_algo_final(indir, file_gts_track)
     # figure1a(PARSER.parse_args().gts)
     # figures1bd(PARSER.parse_args().indir, PARSER.parse_args().gts)
-    figure2(PARSER.parse_args().indir, PARSER.parse_args().gts)
+    # figure2(PARSER.parse_args().indir, PARSER.parse_args().gts)
     
     # Local feat processing
 
     # Global feat processing
-    bayle_fig3()
+    # bayle_fig3()
 
     utils.print_success("Done in " + str(int(round(time.time() * 1000)) - begin) + "ms")
+
+if __name__ == "__main__":
+    main()
