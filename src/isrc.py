@@ -46,7 +46,7 @@ def plot_isrc_country_repartition(isrc_filename="ISRC_valid.txt", img_outdir="")
     img_outdir = utils.abs_path_dir(img_outdir)
     # Gather countries' name along ISO-2 codes
     countries = {}
-    with open('wikipedia-iso-country-codes.csv', 'r') as csvfile:
+    with open('src/wikipedia-iso-country-codes.csv', 'r') as csvfile:
         codes = csv.reader(csvfile, delimiter=',', quotechar='"')
         for row in codes:
             countries[row[0]] = row[1]

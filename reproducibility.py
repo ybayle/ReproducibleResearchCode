@@ -26,7 +26,7 @@ import sys
 from statistics import mean, stdev
 from sklearn.metrics import precision_recall_curve, precision_score, recall_score, classification_report, f1_score, accuracy_score
 sys.path.insert(0, './src/')
-# import isrc
+import isrc
 import vqmm
 import stats
 import utils
@@ -210,15 +210,14 @@ def main():
     utils.print_success("Reproducible research (approx. 8h)")
 
     # Variables
-    # groundtruths_filename = "groundtruths.csv"
-    # results_dir = "results/"
-    # utils.create_dir(results_dir)
+    groundtruths_filename = "groundtruths/database2.csv"
+    results_dir = utils.create_dir("figures/")
     
     # # Figure 1
-    # isrc.plot_isrc_year_distribution(groundtruths_filename, results_dir)
+    isrc.plot_isrc_year_distribution(groundtruths_filename, results_dir)
     
     # # Figure 2
-    # isrc.plot_isrc_country_repartition(groundtruths_filename, results_dir)
+    isrc.plot_isrc_country_repartition(groundtruths_filename, results_dir)
 
     # TODO
     # instead of using my own wav processed file, download and compute the one from scientists website 
@@ -240,7 +239,7 @@ def main():
     # tracks_dir = "tracks/"
     # clean_filenames(tracks_dir)
 
-    # svmbff.experiment_1()
+    svmbff.experiment_1()
     # dir_tracks = utils.create_dir("tracks")
     # yaafe_feat_extraction(dir_tracks)
     # ghosal.experiment_1()
@@ -252,16 +251,16 @@ def main():
     # svmbff_out = dir_tmp + "SVMBFF.csv"
     # svmbff.run_kea(svmbff_train, svmbff_test, svmbff_out)
     # svmbff.experiment_2_3()
-    # ghosal.experiments_2_3("tmp/ghosal/database1.csv")
+    # ghosal.experiments_2_3("src/tmp/ghosal/database1.csv")
 
     # vqmm.process_results()
-    experiment_2()
-    experiment_3()
+    # experiment_2()
+    # experiment_3()
 
-    indir = "predictions"
-    gts_file = "groundtruths/database2.csv"
-    outdir = utils.create_dir("figures")
-    classify.plot_roc(indir, gts_file, outdir)
+    # indir = "predictions"
+    # gts_file = "groundtruths/database2.csv"
+    # outdir = utils.create_dir("figures")
+    # classify.plot_roc(indir, gts_file, outdir)
 
     # bayle.main()
     # TODO
