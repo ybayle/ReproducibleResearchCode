@@ -36,7 +36,7 @@ import svmbff
 import classify
 
 utils.print_warning("You need a python 2 environment.")
-utils.print_warning("You need at least 150Go of free space and to store tracks in a dir named: tracks/")
+utils.print_warning("You need at least 60Go of free space and to store tracks in a dir named: tracks/")
 
 def clean_filenames(tracks_dir = "tracks/"):
     """Description of clean_filenames
@@ -190,6 +190,7 @@ def experiment_3():
         print("F-score  : " + str(f1_score(test_groundtruths, predictions, average='weighted')))
         print("Precision: " + str(precision_score(test_groundtruths, predictions, average=None)))
         print("Recall   : " + str(recall_score(test_groundtruths, predictions, average=None)))
+        print("F-Measure " + str(f1_score(test_groundtruths, predictions, average=None)))
 
     utils.print_info("Random")
     test_groundtruths = ["s", ] * test_groundtruths.count("s") + ["i", ] * test_groundtruths.count("i")
@@ -200,6 +201,7 @@ def experiment_3():
     print("F-score  : " + str(f1_score(test_groundtruths, predictions, average='weighted')))
     print("Precision: " + str(precision_score(test_groundtruths, predictions, average=None)))
     print("Recall   : " + str(recall_score(test_groundtruths, predictions, average=None)))
+    print("F-Measure " + str(f1_score(test_groundtruths, predictions, average=None)))
 
 def main():
     """Description of main
@@ -253,15 +255,15 @@ def main():
     # ghosal.experiments_2_3("tmp/ghosal/database1.csv")
 
     # vqmm.process_results()
-    # experiment_2()
-    # experiment_3()
+    experiment_2()
+    experiment_3()
 
-    # indir = "predictions"
-    # gts_file = "groundtruths/database2.csv"
-    # outdir = utils.create_dir("figures")
-    # classify.plot_roc(indir, gts_file, outdir)
+    indir = "predictions"
+    gts_file = "groundtruths/database2.csv"
+    outdir = utils.create_dir("figures")
+    classify.plot_roc(indir, gts_file, outdir)
 
-    bayle.main()
+    # bayle.main()
     # TODO
     # stats.main() # make 10 replicates for expe1
 
