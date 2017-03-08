@@ -86,35 +86,37 @@ def merge_arff(indir, outfilename):
     cpt_invalid_fn = 0
     # Write first lines of ARFF template file
     for filename in filenames:
-        new_fn = validate_arff(indir + filename)
-        if new_fn:
-            with open(new_fn, 'r') as template:
-                nb_line = 77
-                for line in template:
-                    if not nb_line:
-                        break
-                    nb_line -= 1
-                    outfn.write(line)
-                break
-        else:
-            cpt_invalid_fn += 1
+        if os.path.isfile(indir + filename):
+            new_fn = validate_arff(indir + filename)
+            if new_fn:
+                with open(new_fn, 'r') as template:
+                    nb_line = 74
+                    for line in template:
+                        if not nb_line:
+                            break
+                        nb_line -= 1
+                        outfn.write(line)
+                    break
+            else:
+                cpt_invalid_fn += 1
     # Append all arff file to the output file
     cur_file_num = 1
     for filename in filenames:
-        new_fn = validate_arff(indir + filename)
-        if new_fn:
-            cur_file_num = cur_file_num + 1
-            utils.print_progress_start("Analysing file\t" + str(cur_file_num))
-            fname = open(new_fn, 'r')
-            outfn.write("".join(fname.readlines()[74:77]))
-            fname.close()
-        else:
-            cpt_invalid_fn += 1
+        if os.path.isfile(indir + filename):
+            new_fn = validate_arff(indir + filename)
+            if new_fn:
+                cur_file_num = cur_file_num + 1
+                utils.print_progress_start("Analysing file\t" + str(cur_file_num))
+                fname = open(new_fn, 'r')
+                outfn.write("".join(fname.readlines()[74:77]))
+                fname.close()
+            else:
+                cpt_invalid_fn += 1
     utils.print_progress_end()
     outfn.close()
     # os.system("rm " + indir + "*.arff")
     if cpt_invalid_fn:
-        utils.print_warning(str(cpt_invalid_fn) + " ARFF with errors found")
+        utils.print_warning(str(cpt_invalid_fn) + " ARFF files with errors found")
     return outfilename
 
 def add_groundtruth(feature_fn, groundtruth_fn, output_fn):
@@ -293,7 +295,7 @@ def process_results(in_fn, out_fn):
     out_fp.close()
 
 def experiment_2_3():
-    process_results("tmp/svmbff/SVMBFF.csv", "predictions/SVMBFF.csv")
+    process_results("src/tmp/svmbff/SVMBFF.csv", "predictions/SVMBFF.csv")
 
 def run_kea(train_file, test_file, out_file, verbose=False):
     """Description of run_kea
@@ -306,10 +308,10 @@ def run_kea(train_file, test_file, out_file, verbose=False):
     os.system(kea_cmd)
     train_dir = train_file.split(os.sep)
     train_dir = os.sep.join(train_dir[:-1])
-    os.system("rm " + train_dir + "/*affinities*")
+    # os.system("rm " + train_dir + "/*affinities*")
     test_dir = test_file.split(os.sep)
     test_dir = os.sep.join(test_dir[:-1])
-    os.system("rm " + test_dir + "/*affinities*")
+    # os.system("rm " + test_dir + "/*affinities*")
 
 def run_kea_on_folds(folds_dir):
     """Description of run_kea_on_folds
@@ -437,8 +439,7 @@ def extract_features(tracks_dir="tracks/", feat_dir="features/"):
     utils.print_success("Extracting features")
     tracks_fn = os.listdir(tracks_dir)
     utils.create_dir(feat_dir)
-    tmp_folder = "tmp/"
-    utils.create_dir(tmp_folder)
+    feat_dir = utils.create_dir(feat_dir + "svmbff")
     bextract = "bextract -mfcc -zcrs -ctd -rlf -flx -ws 1024 -as 898 -sv -fe "
     for index, filename in enumerate(tracks_fn):
         utils.print_progress_start(str(index) + "/" + str(len(tracks_fn)) + " " + filename)
@@ -453,7 +454,10 @@ def extract_features(tracks_dir="tracks/", feat_dir="features/"):
             utils.print_info("http://marsyas.info/doc/manual/marsyas-user/Step_002dby_002dstep-building-instructions.html#Step_002dby_002dstep-building-instructions")
             utils.print_info("http://stackoverflow.com/a/21173918")
             utils.print_error("Program exit")
-        os.rename("MARSYAS_EMPTY" + new_fn, feat_dir + new_fn)
+        # print(new_fn)
+        # print(feat_dir + " " + new_fn)
+        os.rename(new_fn, feat_dir + new_fn)
+        # os.rename("MARSYAS_EMPTY" + new_fn, feat_dir + new_fn)
         os.system("rm " + track_path)
     utils.print_progress_end()
     os.system("rm bextract_single.mf")
@@ -489,19 +493,18 @@ def table1_exp1(folds_dir):
         for val in f1:
             filep.write("SVMBFF," + str(val) + "\n")
 
-def experiment_1():
-    utils.print_success("SVMBFF Experiment 1 (approx. 2 minutes)")
+def experiment_1(folder="."):
+    utils.print_success("SVMBFF Experiment 1 (approx. 1 minutes)")
     
     # Variables
-    dir_tmp = "tmp/"
-    utils.create_dir(dir_tmp)
-    dir_svmbff = dir_tmp + "svmbff/"
-    utils.create_dir(dir_svmbff)
-    dir_tracks = "tracks/"
-    dir_feat = "features/"
-    fn_feats_db1 = "svmbff_database1.arff"
-    feats_gts_db1 = dir_feat + "svmbff_database1.arff"
-    groundtruths = "groundtruths/database1.csv"
+    folder = utils.abs_path_dir(folder)
+    dir_tmp = utils.create_dir(folder + "src/tmp/")
+    dir_svmbff = utils.create_dir(dir_tmp + "svmbff/")
+    dir_tracks = folder + "tracks/"
+    dir_feat = folder + "features/svmbff/"
+    fn_feats_db1 = dir_svmbff + "svmbff_database1.arff"
+    feats_gts_db1 = folder + "features/" + "svmbff_database1.arff"
+    groundtruths = folder + "groundtruths/database1.csv"
     
     extract_features(dir_tracks)
     merge_arff(dir_feat, fn_feats_db1)
@@ -513,7 +516,7 @@ def experiment_1():
 
 def main():
     utils.print_success("SVMBFF (approx. 2 minutes)")
-    experiment_1()
+    experiment_1(folder="../")
 
 if __name__ == "__main__":
     PARSER = argparse.ArgumentParser(description="Validate list of ISRCs")

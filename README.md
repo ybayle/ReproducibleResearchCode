@@ -2,7 +2,9 @@
 Replicable python code for my IEEE2017 article
 
 ### Requirements/Dependencies
-- Python 2 environment because YAAFE only works under Python 2
+- Python 2 and 3 environments because all scripts works under python 3 except for YAAFE that only works under Python 2
+- You need at least 60Go of free space
+- You need to manually download and store tracks in a dir named: tracks/
 - [Yaafe](https://github.com/Yaafe/Yaafe)
     conda install -c https://conda.anaconda.org/yaafe yaafe
 - [Marsyas](https://github.com/marsyas/marsyas/)

@@ -18,3 +18,6 @@ fi
 if [ -d "./results" ]; then
     rm -r ./results
 fi
+if [ -d "./figures" ]; then
+    rm -r ./figures
+fi
