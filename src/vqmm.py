@@ -262,22 +262,23 @@ def experiment_1(vqmm_cmd, codebook_file):
     print(f1)
     print("Accuracy " + str(sum(acc)/float(len(acc))) + " ± " + str(stdev(acc)))
     print("F-Measure " + str(sum(f1)/float(len(f1))) + " ± " + str(stdev(f1)))
-    # with open("../stats/table1_accuracy.csv", "a") as filep:
-    #     filep.write("VQMM")
-    #     for val in acc:
-    #         filep.write("," + str(val))
-    #     filep.write("\n")
-    # with open("../stats/table1_f1.csv", "a") as filep:
-    #     filep.write("VQMM")
-    #     for val in f1:
-    #         filep.write("," + str(val))
-    #     filep.write("\n")
-    with open("stats/" + "table1_accuracy.csv", "a") as filep:
+    dir_stats = utils.create_dir("stats/")
+    with open(dir_stats + "table1_accuracy.csv", "a") as filep:
+        filep.write("VQMM")
         for val in acc:
-            filep.write("VQMM," + str(val) + "\n")
-    with open("stats/" + "table1_f1.csv", "a") as filep:
+            filep.write("," + str(val))
+        filep.write("\n")
+    with open(dir_stats + "table1_f1.csv", "a") as filep:
+        filep.write("VQMM")
         for val in f1:
-            filep.write("VQMM," + str(val) + "\n")
+            filep.write("," + str(val))
+        filep.write("\n")
+    # with open(dir_stats + "table1_accuracy.csv", "a") as filep:
+    #     for val in acc:
+    #         filep.write("VQMM," + str(val) + "\n")
+    # with open(dir_stats + "table1_f1.csv", "a") as filep:
+    #     for val in f1:
+    #         filep.write("VQMM," + str(val) + "\n")
 
 def experiments_2_3(vqmm_cmd, codebook_file):
     utils.print_success("Experiment 2 & 3 (approx. 6h")

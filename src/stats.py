@@ -23,7 +23,9 @@ TABLE 1
 
 """
 
+from os import listdir
 import sys
+import utils
 import numpy as np
 from scipy import stats
 from statsmodels.stats.multicomp import MultiComparison
@@ -51,9 +53,10 @@ https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bartlett.html
     """
     if len(data) == 3:
         statistic, pvalue = stats.bartlett(data[0], data[1], data[2])
+    elif len(data) == 4:
+        statistic, pvalue = stats.bartlett(data[0], data[1], data[2], data[3])
     else:
-        print(data)
-        print("TODO barlett not 3 values")
+        utils.print_error("TODO barlett manage more values")
     print("Bartlett Statistic " + str(statistic) + " and p-value " + str(pvalue))
     if pvalue > 0.05:
         return True
@@ -83,8 +86,10 @@ https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.f_oneway.html
     """
     if len(data) == 3:
         statistic, pvalue = stats.f_oneway(data[0], data[1], data[2])
+    elif len(data) == 4:
+        statistic, pvalue = stats.f_oneway(data[0], data[1], data[2], data[3])
     else:
-        print("TODO anova not 3 values")
+        utils.print_error("TODO ANOVA manage more values")
     print("ANOVA Statistic " + str(statistic) + " and p-value " + str(pvalue))
     if pvalue < 0.05:
         return True
@@ -109,8 +114,10 @@ https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kruskal.html
     """
     if len(data) == 3:
         statistic, pvalue = stats.kruskal(data[0], data[1], data[2])
+    elif len(data) == 4:
+        statistic, pvalue = stats.kruskal(data[0], data[1], data[2], data[3])
     else:
-        print("TODO kruskal not 3 values")
+        utils.print_error("TODO kruskal manage more values")
     print("Kruskal Statistic " + str(statistic) + " and p-value " + str(pvalue))
     if pvalue > 0.05:
         # same
@@ -120,49 +127,38 @@ https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kruskal.html
         return True
 
 def main():
-    data = []
-    names = []
-    with open("stats/table1_f1.csv", "r") as filep:
-        # next(filep)
-        for line in filep:
-            row = line[:-1].split(",")
-            tmp = []
-            for index in range(1, len(row)):
-                names.append(row[0])
-                tmp.append(float(row[index]))
-            data.append(tmp)
-    # with open("table2_f1.csv", "r") as filep:
-    #     next(filep)
-    #     tmp = []
-    #     for line in filep:
-    #         row = line[:-1].split(",")
-    #         # print("row[1] " + str(row[0]) + " names[:-2] " + str(names[-2]) + " " + str(row[0] != names[:-2]))
-    #         if len(names) > 3 and row[0] != names[-1]:
-    #             data.append(tmp)
-    #             tmp = []
-    #         tmp.append(float(row[1]))
-    #         names.append(row[0])
-    # print(names)
-    # print(data)
-    # data = [[10, 1000, 300000, 400], [1, 1.1, 1.2, 1.05]]
-    # data = [[9, 9.1, 9.2, 9.3], [1, 1.1, 1.2, 1.05]]
-    # data = [[1, 1.1, 1.2, 1.05, 1.06], [1, 1.1, 1.2, 1.05]]
-    print("data " + str(data))
-    if assert_homoscedasticity(data):
-        print("homoscedasticity ok")
-        if anova(data):
-            print("anova ok")
-            tukey(data, names)
+    utils.print_success("Statistical analysis")
+    stats_dir = "stats/"
+    stats_file = listdir(stats_dir)
+    for filen in stats_file:
+        utils.print_info(filen)
+        data = []
+        names = []
+        with open(stats_dir + filen, "r") as filep:
+            for line in filep:
+                # Read file with lines like this:
+                # GA,0.578947368421,0.631578947368,0.710526315789,0.722222222222
+                # SVMBFF,0.631578947368,0.684210526316,0.815789473684,0.66666666
+                # VQMM,0.736842105263,0.842105263158,0.842105263158,0.75,0.61111
+                row = line[:-1].split(",")
+                tmp = []
+                for index in range(1, len(row)):
+                    names.append(row[0])
+                    tmp.append(float(row[index]))
+                data.append(tmp)
+        if assert_homoscedasticity(data):
+            if anova(data):
+                tukey(data, names)
+            else:
+                print("All means are the same")
         else:
-            print("All means are the same")
-    else:
-        if kruskal(data):
-            print("cf R")
-            # Dunn
-            # Conover-Iman
-            # Dwass-Steel-Citchlow-Fligner
-        else:
-            print("All means are the same")
+            if kruskal(data):
+                print("cf R")
+                # Dunn
+                # Conover-Iman
+                # Dwass-Steel-Citchlow-Fligner
+            else:
+                print("All means are the same")
 
 if __name__ == "__main__":
     main()

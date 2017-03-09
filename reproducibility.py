@@ -126,6 +126,17 @@ def results_experiment_2(algo_name, predictions, groundtruths):
 
     print("Accuracy " + str(sum(acc)/float(len(acc))) + " ± " + str(stdev(acc)))
     print("F-Measure " + str(sum(f1)/float(len(f1))) + " ± " + str(stdev(f1)))
+    dir_stats = utils.create_dir("stats/")
+    with open(dir_stats + "table2_accuracy.csv", "a") as filep:
+        filep.write(algo_name)
+        for val in acc:
+            filep.write("," + str(val))
+        filep.write("\n")
+    with open(dir_stats + "table2_f1.csv", "a") as filep:
+        filep.write(algo_name)
+        for val in f1:
+            filep.write("," + str(val))
+        filep.write("\n")
 
 def experiment_2():
     utils.print_success("Experiment 2")

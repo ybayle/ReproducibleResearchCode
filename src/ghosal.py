@@ -125,13 +125,23 @@ def classify(file_features):
     # Print average +- standard deviation
     print("Accuracy " + str(sum(acc)/float(len(acc))) + " ± " + str(stdev(acc)))
     print("F-Measure " + str(sum(f1)/float(len(f1))) + " ± " + str(stdev(f1)))
-    dir_res = utils.create_dir("stats/")
-    with open(dir_res + "table1_accuracy.csv", "a") as filep:
+    dir_stats = utils.create_dir("stats/")
+    with open(dir_stats + "table1_accuracy.csv", "a") as filep:
+        filep.write("GA")
         for val in acc:
-            filep.write("Ghosal'," + str(val) + "\n")
-    with open(dir_res + "table1_f1.csv", "a") as filep:
+            filep.write("," + str(val))
+        filep.write("\n")
+    with open(dir_stats + "table1_f1.csv", "a") as filep:
+        filep.write("GA")
         for val in f1:
-            filep.write("Ghosal'," + str(val) + "\n")
+            filep.write("," + str(val))
+        filep.write("\n")
+    # with open(dir_stats + "table1_accuracy.csv", "a") as filep:
+    #     for val in acc:
+    #         filep.write("Ghosal'," + str(val) + "\n")
+    # with open(dir_stats + "table1_f1.csv", "a") as filep:
+    #     for val in f1:
+    #         filep.write("Ghosal'," + str(val) + "\n")
 
 def read_files(dir_features):
     utils.print_success("Preprocessing YAAFE's features  (approx. 20 minutes)")
