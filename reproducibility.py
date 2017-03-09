@@ -266,22 +266,18 @@ def main():
     # svmbff_out = dir_tmp + "SVMBFF.csv"
     # svmbff.run_kea(svmbff_train, svmbff_test, svmbff_out)
     # svmbff.experiment_2_3()
-
-    # en cours
-    ghosal.experiments_2_3("src/tmp/ghosal/database1.csv")
-
-    # vqmm.main() # vqmm.process_results()
+    # ghosal.experiments_2_3("src/tmp/ghosal/database1.csv")
+    # vqmm.main() # vqmm.process_results()    
     # experiment_2()
     # experiment_3()
-
     # indir = "predictions"
     # gts_file = "groundtruths/database2.csv"
     # outdir = utils.create_dir("figures")
     # classify.plot_roc(indir, gts_file, outdir)
 
+    # en cours
+    stats.main() # make 10 replicates for expe1
     # bayle.main()
-    # TODO
-    # stats.main() # make 10 replicates for expe1
 
 if __name__ == "__main__":
     main()

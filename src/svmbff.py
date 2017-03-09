@@ -485,7 +485,7 @@ def table1_exp1(folds_dir):
     # Print average ± standard deviation
     utils.print_info("Accuracy " + str(sum(acc)/float(len(acc))) + " ± " + str(stdev(acc)))
     utils.print_info("F-Measure " + str(sum(f1)/float(len(f1))) + " ± " + str(stdev(f1)))
-    dir_res = utils.create_dir("results/")
+    dir_res = utils.create_dir("stats/")
     with open(dir_res + "table1_accuracy.csv", "a") as filep:
         for val in acc:
             filep.write("SVMBFF," + str(val) + "\n")

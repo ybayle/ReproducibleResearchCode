@@ -122,7 +122,7 @@ https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kruskal.html
 def main():
     data = []
     names = []
-    with open("table2_f1.csv", "r") as filep:
+    with open("stats/table1_f1.csv", "r") as filep:
         # next(filep)
         for line in filep:
             row = line[:-1].split(",")
@@ -147,8 +147,11 @@ def main():
     # data = [[10, 1000, 300000, 400], [1, 1.1, 1.2, 1.05]]
     # data = [[9, 9.1, 9.2, 9.3], [1, 1.1, 1.2, 1.05]]
     # data = [[1, 1.1, 1.2, 1.05, 1.06], [1, 1.1, 1.2, 1.05]]
+    print("data " + str(data))
     if assert_homoscedasticity(data):
+        print("homoscedasticity ok")
         if anova(data):
+            print("anova ok")
             tukey(data, names)
         else:
             print("All means are the same")

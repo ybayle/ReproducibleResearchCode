@@ -882,9 +882,11 @@ def plot_roc(indir, gts_file, outdir):
     # plt.title('ROC curve for Algo (AUC)')
     plt.legend(loc='best')
     outdir = utils.abs_path_dir(outdir)
-    plt.savefig(outdir + "Figure_3_ROC.png", dpi=200, bbox_inches="tight")
+    roc_fn = outdir + "Figure_3_ROC.png"
+    plt.savefig(roc_fn, dpi=200, bbox_inches="tight")
     # plt.show()
     plt.close()
+    utils.print_success("ROC curve successfully created in " + roc_fn)
 
 def plot_precision_recall(indir):
     groundtruths = read_item_tag("../repro/groundtruths.csv")
