@@ -281,14 +281,16 @@ def main():
     # vqmm.main() # vqmm.process_results()    
     # experiment_2()
     # experiment_3()
+    
     # indir = "predictions"
     # gts_file = "groundtruths/database2.csv"
     # outdir = utils.create_dir("figures")
     # classify.plot_roc(indir, gts_file, outdir)
+    # classify.plot_precision_recall(indir, gts_file, outdir)
 
     # en cours
-    stats.main() # make 10 replicates for expe1
-    # bayle.main()
+    # stats.main() # make 10 replicates for expe1
+    bayle.main()
 
 if __name__ == "__main__":
     main()

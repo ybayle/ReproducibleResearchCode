@@ -206,7 +206,7 @@ def read_preds(filename):
         for row in filep:
             line = row.split(",")
             # print(line)
-            isrcs[line[0]] = float(line[1])
+            isrcs[line[0]] = 1.0-float(line[1])
     return isrcs
 
 def read_item_tag(filename):
@@ -888,8 +888,8 @@ def plot_roc(indir, gts_file, outdir):
     plt.close()
     utils.print_success("ROC curve successfully created in " + roc_fn)
 
-def plot_precision_recall(indir):
-    groundtruths = read_item_tag("../repro/groundtruths.csv")
+def plot_precision_recall(indir, gts_file, outdir):
+    groundtruths = read_item_tag(gts_file)
     plt.figure(1)
     
     indir = utils.abs_path_dir(indir)
@@ -914,9 +914,10 @@ def plot_precision_recall(indir):
     plt.xlim([-0.05, 1.05])
     plt.title('Precision-Recall curve for Algo (AUC)')
     plt.legend(loc='best')
-    plt.savefig(indir + "/precision_recall.png", dpi=200, bbox_inches="tight")
-    plt.show()
+    plt.savefig(outdir + "precision_recall.png", dpi=200, bbox_inches="tight")
+    # plt.show()
     plt.close()
+    utils.print_success("Precision-Recall curve created in " + outdir)
 
 if __name__ == "__main__":
     PARSER = argparse.ArgumentParser(description="Compare classifiers")

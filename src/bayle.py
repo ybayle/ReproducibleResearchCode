@@ -214,8 +214,13 @@ def process_local_feat(indir, file_gts_track, outdir_local, out_feat_global, tra
             mfccs = []
             groundtruths = []
             with open(indir + filename, "r") as filep:
+                next(filep)
+                next(filep)
+                next(filep)
+                next(filep)
+                next(filep)
                 for line in filep:
-                    line = line.split(" ")
+                    line = line.split(",")
                     mfccs.append(str2arr(line[:-1]))
                     if train:
                         groundtruths.append(line[-1][:-1])
@@ -317,6 +322,7 @@ def create_track_feat_testset(folder, infile, outfile, model_file, train=False):
     for index, filename in enumerate(track_gts):
         utils.print_progress_start(str(index+1) + "/" + str(len(track_gts)) + " " + filename)
         mfccs = []
+        mfccs_1 = []
         extension = ""
         if train:
             extension = ""
@@ -324,15 +330,23 @@ def create_track_feat_testset(folder, infile, outfile, model_file, train=False):
             extension += "_audio_full_mono_22k"
         extension += ".wav.mfcc.csv"
         with open(folder + filename + extension, "r") as filep:
+            if train:
+                next(filep)
+                next(filep)
+                next(filep)
+                next(filep)
+                next(filep)
             for line in filep:
-                line = line.split(" ")
-                mfccs.append(str2arr(line[:-1]))
+                if train:
+                    line = line.split(",")
+                else:
+                    line = line.split(" ")
+                mfccs_1.append(str2arr(line[:-1]))
                 # if train:
                 #     mfccs.append(str2arr(line[:-1]))
                 # else:
                 #     mfccs.append(str2arr(line[0:]))
-
-        mfccs = np.array(mfccs)
+        mfccs = np.array(mfccs_1)
         delta_mfcc = librosa.feature.delta(mfccs)
         delta2_mfcc = librosa.feature.delta(mfccs, order=2)
         tmp = np.append(mfccs, delta_mfcc, axis=1)
@@ -516,14 +530,14 @@ def new_algo_final(indir, file_gts_track):
     Create features at track scale for the train set
     Features: MFCC + Delta + Double Delta + ngrams + hist
     """
-    # model_file = "src/tmp/bayle/models/RandomForest/RandomForest.pkl"
+    model_file = "src/tmp/bayle/models/RandomForest/RandomForest.pkl"
     model_file = "/media/sf_DATA/ReproducibleResearchIEEE2017/src/tmp/bayle/models/RandomForest/RandomForest.pkl"
-    # create_track_feat_testset(indir, filelist_train, feat_train, model_file, train=True)
+    create_track_feat_testset(indir, filelist_train, feat_train, model_file, train=True)
 
     # # 15h28m44s to 19h08m28s Done in 13184117ms
-    # create_track_feat_testset(loc_feat_testset_dirpath, filelist_test, feat_test, model_file)  
+    create_track_feat_testset(loc_feat_testset_dirpath, filelist_test, feat_test, model_file)  
 
-    # classify.create_models(outdir=models_global, train_file=feat_train, classifiers="RandomForest")
+    classify.create_models(outdir=models_global, train_file=feat_train, classifiers="RandomForest")
     process_results(feat_train, feat_test)
 
 def main():
