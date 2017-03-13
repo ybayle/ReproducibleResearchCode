@@ -504,7 +504,7 @@ def process_results(train, test):
     outdir = "predictions/"
     with open(outdir + "Bayle.csv", "w") as filep:
         for name, pred in zip(test_fn, predictions):
-            filep.write(name + "," + str(pred) + "\n")
+            filep.write(name + "," + str(1.0 - float(pred)) + "\n")
 
 def new_algo_final(indir, file_gts_track):
     utils.print_success("Approx. time ~6 hours.")
@@ -523,8 +523,8 @@ def new_algo_final(indir, file_gts_track):
     filelist_test = "groundtruths/database2.csv"
     models_global = utils.create_dir(dir_tmp + "models_track")
 
-    # process_local_feat(indir, file_gts_track, outdir_local=feat_frame_train, out_feat_global=feat_train, train=False)
-    # classify.create_models(outdir=models_dir, train_dir=feat_frame_train, separator=",", classifiers="RandomForest")
+    process_local_feat(indir, file_gts_track, outdir_local=feat_frame_train, out_feat_global=feat_train, train=False)
+    classify.create_models(outdir=models_dir, train_dir=feat_frame_train, separator=",", classifiers="RandomForest")
 
     """
     Create features at track scale for the train set

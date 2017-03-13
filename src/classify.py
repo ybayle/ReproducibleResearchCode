@@ -206,7 +206,8 @@ def read_preds(filename):
         for row in filep:
             line = row.split(",")
             # print(line)
-            isrcs[line[0]] = 1.0-float(line[1])
+            isrcs[line[0]] = float(line[1])
+            # isrcs[line[0]] = 1.0-float(line[1])
     return isrcs
 
 def read_item_tag(filename):
@@ -904,8 +905,6 @@ def plot_precision_recall(indir, gts_file, outdir):
                     predictions.append(isrcs[isrc])
             test_groundtruths = [tag=="s" for tag in test_groundtruths]
             precision, recall, _ = precision_recall_curve(test_groundtruths, predictions)
-            print(len(precision))
-            print(precision)
             plt.plot(recall, precision, label=item[:-4] + " (" + str(round(average_precision_score(test_groundtruths, predictions), 3)) + ")")
 
     plt.xlabel('Recall')

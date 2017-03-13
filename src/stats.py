@@ -30,6 +30,7 @@ import numpy as np
 from scipy import stats
 from statsmodels.stats.multicomp import MultiComparison
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
+from statistics import stdev
 
 def assert_normality(data):
     """Description of assert_normality
@@ -146,6 +147,7 @@ def main():
                     names.append(row[0])
                     tmp.append(float(row[index]))
                 data.append(tmp)
+                print(filen.split(".")[0].split("_")[1].title() + " for " + row[0] + " \t= " + str("{0:.3f}".format(sum(tmp)/len(tmp))) + " ± " + str("{0:.3f}".format(stdev(tmp))))
         if assert_homoscedasticity(data):
             if anova(data):
                 tukey(data, names)

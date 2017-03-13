@@ -280,17 +280,19 @@ def main():
     # ghosal.experiments_2_3("src/tmp/ghosal/database1.csv")
     # vqmm.main() # vqmm.process_results()    
     # experiment_2()
+    # bayle.main()
     # experiment_3()
     
-    # indir = "predictions"
-    # gts_file = "groundtruths/database2.csv"
-    # outdir = utils.create_dir("figures")
-    # classify.plot_roc(indir, gts_file, outdir)
-    # classify.plot_precision_recall(indir, gts_file, outdir)
-
-    # en cours
+    indir = "predictions"
+    gts_file = "groundtruths/database2.csv"
+    outdir = utils.create_dir("figures")
+    classify.plot_roc(indir, gts_file, outdir)
+    classify.plot_precision_recall(indir, gts_file, outdir)
     # stats.main() # make 10 replicates for expe1
-    bayle.main()
+
+    # todo
+    # vqmm.py train() output to trash
+    # Thibault Langlois vqmm reading filename without whole path
 
 if __name__ == "__main__":
     main()
