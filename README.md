@@ -1,5 +1,5 @@
-# ReproducibleResearchIEEE2017
-Replicable python code for my IEEE2017 article
+# Reproducible research code
+Replicable python code for my article
 
 ### Requirements/Dependencies
 - Python 2 and 3 environments because all scripts works under python 3 except for YAAFE that only works under Python 2
