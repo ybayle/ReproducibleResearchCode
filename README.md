@@ -3,13 +3,9 @@
 Replicable python code for the article:
 
 ```
-@article{Bayle2017,
+@unpublished{Bayle2017,
   author = {Bayle, Yann and Robine, Matthias and Hanna, Pierre},
-  journal = {Applied Sciences},
   link = {https://arxiv.org/abs/1706.07613},
-  month = {Nov.},
-  page = {inpress},
-  publisher={Multidisciplinary Digital Publishing Institute},
   title = {Toward faultless content-based playlists generation for instrumentals},
   year = {2017}
 }
