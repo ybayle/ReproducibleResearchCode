@@ -34,3 +34,21 @@ Replicable python code for the article:
 - You need to manually download and store tracks in a dir named: tracks/
 - [Yaafe](https://github.com/Yaafe/Yaafe)'s intallation: `conda install -c https://conda.anaconda.org/yaafe yaafe`
 - [Marsyas](https://github.com/marsyas/marsyas/)'s installation: http://marsyas.info/doc/manual/marsyas-user/Step_002dby_002dstep-building-instructions.html#Step_002dby_002dstep-building-instructions
+
+### Alternatives to consider for the SVD and SVS
+
+Singing Voice Detection
+
+- [Single-Channel Blind Source Separation for Singing Voice Detection: A Comparative Study](https://arxiv.org/abs/1805.01201)
+- https://github.com/f0k/ismir2015
+- https://github.com/EdwardLin2014/SingingVoiceDetection_Python
+- https://github.com/pikrakis/Unsupervised-Singing-Voice-Detection-Using-Dictionary-Learning
+- https://github.com/TheaGao/SklearnModel/blob/f6b34cbb88c35a4fc81074fd7f0ab929bf59207a/segmentLabel.py
+
+Singing Voice Separation
+
+- https://github.com/Js-Mim/mss_pytorch
+- https://github.com/posenhuang/singingvoiceseparationrpca
+- https://github.com/Xiao-Ming/UNet-VocalSeparation-Chainer
+- https://github.com/EdwardLin2014/CNN-with-IBM-for-Singing-Voice-Separation
+- https://github.com/andabi/music-source-separation
