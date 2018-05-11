@@ -44,6 +44,7 @@ Singing Voice Detection
 - https://github.com/EdwardLin2014/SingingVoiceDetection_Python
 - https://github.com/pikrakis/Unsupervised-Singing-Voice-Detection-Using-Dictionary-Learning
 - https://github.com/TheaGao/SklearnModel/blob/f6b34cbb88c35a4fc81074fd7f0ab929bf59207a/segmentLabel.py
+- https://ieeexplore.ieee.org/document/8334252/
 
 Singing Voice Separation
 
