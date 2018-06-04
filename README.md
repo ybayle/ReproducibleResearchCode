@@ -53,3 +53,4 @@ Singing Voice Separation
 - https://github.com/Xiao-Ming/UNet-VocalSeparation-Chainer
 - https://github.com/EdwardLin2014/CNN-with-IBM-for-Singing-Voice-Separation
 - https://github.com/andabi/music-source-separation
+- [Musical Instrument Separation on Shift-Invariant Spectrograms via Stochastic Dictionary Learning](https://arxiv.org/abs/1806.00273) Sören Schulze, Emily J. King
