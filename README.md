@@ -45,6 +45,7 @@ Singing Voice Detection
 - https://github.com/pikrakis/Unsupervised-Singing-Voice-Detection-Using-Dictionary-Learning
 - https://github.com/TheaGao/SklearnModel/blob/f6b34cbb88c35a4fc81074fd7f0ab929bf59207a/segmentLabel.py
 - https://ieeexplore.ieee.org/document/8334252/
+- [Revisiting singing voice detection: A quantitative review and the future outlook](https://arxiv.org/pdf/1806.01180.pdf) - Kyungyun Lee, Keunwoo Choi, Juhan Nam
 
 Singing Voice Separation
 
