@@ -46,6 +46,7 @@ Singing Voice Detection
 - https://github.com/TheaGao/SklearnModel/blob/f6b34cbb88c35a4fc81074fd7f0ab929bf59207a/segmentLabel.py
 - https://ieeexplore.ieee.org/document/8334252/
 - [Revisiting singing voice detection: A quantitative review and the future outlook](https://arxiv.org/pdf/1806.01180.pdf) - Kyungyun Lee, Keunwoo Choi, Juhan Nam
+- [Singing style investigation by residual siamese convolutional neural networks](https://ccrma.stanford.edu/damp/publications/icassp_2018_singing_style_Wang_Tzanetakis.pdf) - Cheng-i Wang and George Tzanetakis, ICASSP 2018
 
 Singing Voice Separation
 
