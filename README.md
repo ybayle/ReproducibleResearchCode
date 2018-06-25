@@ -56,3 +56,4 @@ Singing Voice Separation
 - https://github.com/EdwardLin2014/CNN-with-IBM-for-Singing-Voice-Separation
 - https://github.com/andabi/music-source-separation
 - [Musical Instrument Separation on Shift-Invariant Spectrograms via Stochastic Dictionary Learning](https://arxiv.org/abs/1806.00273) Sören Schulze, Emily J. King
+- [[Code](https://github.com/sungheonpark/music_source_sepearation_SH_net)][[PDF](https://arxiv.org/abs/1805.08559)] Music Source Separation Using Stacked Hourglass Networks - Sungheon Park, Taehoon Kim, Kyogu Lee, Nojun Kwak
