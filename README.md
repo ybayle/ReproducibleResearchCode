@@ -47,7 +47,8 @@ Singing Voice Detection
 - https://ieeexplore.ieee.org/document/8334252/
 - [Revisiting singing voice detection: A quantitative review and the future outlook](https://arxiv.org/pdf/1806.01180.pdf) - Kyungyun Lee, Keunwoo Choi, Juhan Nam
 - [Singing style investigation by residual siamese convolutional neural networks](https://ccrma.stanford.edu/damp/publications/icassp_2018_singing_style_Wang_Tzanetakis.pdf) - Cheng-i Wang and George Tzanetakis, ICASSP 2018
-
+- [Singing Voice Detection across Different Music Genres](http://www.aes.org/e-lib/browse.cfm?elib=18771) - Scholz, Florian; Vatolkin, Igor; Rudolph, Günter
+ 
 Singing Voice Separation
 
 - https://github.com/Js-Mim/mss_pytorch
