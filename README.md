@@ -1,13 +1,13 @@
-# SMC2017
+# SIC (Songs ans Instrumentals classification)
 
 Replicable python code for the article:
 
 ```
-@unpublished{Bayle2017,
-  author = {Bayle, Yann and Robine, Matthias and Hanna, Pierre},
-  link = {https://arxiv.org/abs/1706.07613},
-  title = {Toward faultless content-based playlists generation for instrumentals},
-  year = {2017}
+@unpublished{Bayle2019,
+  author = {Bayle, Yann and Hanna, Pierre and Robine, Matthias},
+  title = {Content-based information retrieval for supervised classification of musical tags in real-world unbalanced datasets: Application to the Instrumentals and Songs},
+  year = {2019},
+  note = {Submitted to PLOS ONE}
 }
 ```
 
